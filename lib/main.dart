@@ -1,5 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:lms1/components/widgets/loading_widget.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:lms1/presentation/screens/home/home_page.dart';
+import 'package:lms1/presentation/screens/login/bloc/login_bloc.dart';
+
+import 'injection_container.dart';
+import 'presentation/screens/register/register.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -8,6 +13,7 @@ void main() async {
 }
 
 Future initialization(BuildContext? context) async {
+  await initDI();
   await Future.delayed(Duration.zero);
 }
 
@@ -16,13 +22,19 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: "Library Management App",
-      home: Scaffold(
-        body: SafeArea(
-          child: Center(
-            child: LoadingWidget(),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(create: (context) => sl<RegisterBloc>()),
+        BlocProvider(create: (context) => sl<LoginBloc>()),
+      ],
+      child: const MaterialApp(
+        debugShowCheckedModeBanner: false,
+        title: "Library Management App",
+        home: Scaffold(
+          body: SafeArea(
+            child: Center(
+              child: HomePage(),
+            ),
           ),
         ),
       ),
