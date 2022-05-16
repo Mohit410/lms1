@@ -1,9 +1,17 @@
+import 'package:dartz/dartz.dart';
+import 'package:lms1/core/error/failure.dart';
+import 'package:lms1/core/response/response.dart';
+import 'package:lms1/core/usecase/usecase.dart';
+import 'package:lms1/data/models/login_body.dart';
 import 'package:lms1/domain/repositories/repositories.dart';
 
-class GetLogin {
-  final AuthenticationRepository repository;
+class GetLogin extends UseCase<LoginResponse, LoginBody> {
+  final AuthenticationRepository _repository;
 
-  GetLogin({required this.repository});
+  GetLogin(this._repository);
 
-  Future<void> call() async {}
+  @override
+  Future<Either<Failure, LoginResponse>> call(LoginBody params) async {
+    return await _repository.login(params);
+  }
 }

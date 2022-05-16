@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:lms1/core/utils/validator.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:lms1/core/utils/utils.dart';
 import 'package:lms1/presentation/components/utils/helper.dart';
 import 'package:lms1/presentation/components/widgets/widgets.dart';
+import 'package:lms1/presentation/screens/home/home_page.dart';
 import 'package:lms1/presentation/screens/login/login.dart';
 
 class LoginPage extends StatefulWidget {
@@ -23,7 +25,8 @@ class _LoginPageState extends State<LoginPage> {
   @override
   void initState() {
     super.initState();
-    emailController = TextEditingController();
+    emailController =
+        TextEditingController(text: UserPreferences.getUserEmail());
     passwordController = TextEditingController();
     _isPasswordVisible = false;
   }
@@ -39,20 +42,35 @@ class _LoginPageState extends State<LoginPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Login'),
+        title: Center(
+          child: Text(
+            'Login',
+            style: GoogleFonts.pacifico(),
+          ),
+        ),
+        automaticallyImplyLeading: false,
+        elevation: 1,
+        foregroundColor: AppBarColors.foregroundColor.color,
+        backgroundColor: AppBarColors.backgroundColor.color,
       ),
       body: Padding(
         padding: const EdgeInsets.all(8),
-        child: buildBody(),
+        child: buildBody(context),
       ),
     );
   }
 
-  buildBody() {
+  buildBody(BuildContext buildContext) {
     return BlocConsumer<LoginBloc, LoginState>(
-      listener: (context, state) {
+      listener: (context, state) async {
         if (state is LoginSuccess) {
           showSnackbar(state.message, context);
+          await UserPreferences.setUserEmail(emailController.text);
+          Navigator.of(buildContext).pushReplacement(
+            MaterialPageRoute(
+              builder: (context) => const HomePage(),
+            ),
+          );
         }
         if (state is LoginFailed) {
           showSnackbar(state.message, context);
@@ -130,7 +148,12 @@ class _LoginPageState extends State<LoginPage> {
   loginButton() => CustomButton(
         onPressed: () {
           if (_formKey.currentState!.validate()) {
-            showSnackbar('All Passed', context);
+            BlocProvider.of<LoginBloc>(context).add(
+              LoginClicked(
+                email: emailController.text,
+                password: passwordController.text,
+              ),
+            );
           }
         },
         lable: 'Login',

@@ -7,7 +7,15 @@ abstract class RegisterEvent extends Equatable {
 }
 
 class RegisterClicked extends RegisterEvent {
-  final UserModel userModel;
+  final RegisterUserModel userModel;
 
   RegisterClicked({required this.userModel});
 }
+
+class UpdateUserClicked extends RegisterEvent {
+  final UserModel userModel;
+  
+  UpdateUserClicked({required this.userModel});
+}
+
+class BackButtonClicked extends RegisterEvent {}

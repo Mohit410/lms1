@@ -1,0 +1,33 @@
+part of 'user_detail_bloc.dart';
+
+abstract class UserDetailState extends Equatable {
+  const UserDetailState();
+
+  @override
+  List<Object> get props => [];
+}
+
+class Empty extends UserDetailState {}
+
+class Loading extends UserDetailState {}
+
+class Loaded extends UserDetailState {
+  final List<IssuedBookModel> issuedBooks;
+  final int totalFine;
+  final List<TransactionModel> transactions;
+  final UserModel user;
+  final List<FineHistoryModel> fineHistory;
+
+  const Loaded(
+      {required this.issuedBooks,
+      required this.totalFine,
+      required this.transactions,
+      required this.user,
+      required this.fineHistory});
+}
+
+class Failed extends UserDetailState {
+  final String message;
+
+  const Failed(this.message);
+}

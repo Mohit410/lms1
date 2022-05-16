@@ -1,15 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:lms1/core/utils/validator.dart';
-import 'package:lms1/data/models/user_model.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:lms1/core/utils/utils.dart';
+import 'package:lms1/data/models/models.dart';
 import 'package:lms1/injection_container.dart';
 import 'package:lms1/presentation/components/utils/helper.dart';
 import 'package:lms1/presentation/components/widgets/widgets.dart';
 import 'package:lms1/presentation/screens/register/register.dart';
 
 class RegisterPage extends StatefulWidget {
-  const RegisterPage({Key? key}) : super(key: key);
+  static Route route(UserModel? user, PageMode mode) =>
+      MaterialPageRoute(builder: (_) => RegisterPage(user: user, mode: mode));
+
+  final UserModel? user;
+  final PageMode mode;
+  const RegisterPage({
+    Key? key,
+    required this.user,
+    required this.mode,
+  }) : super(key: key);
 
   @override
   State<RegisterPage> createState() => _RegisterPageState();
@@ -33,14 +43,14 @@ class _RegisterPageState extends State<RegisterPage> {
   void initState() {
     super.initState();
     _bloc = sl<RegisterBloc>();
-    nameController = TextEditingController();
-    emailController = TextEditingController();
-    mobileNoController = TextEditingController();
-    stateController = TextEditingController();
-    addressController = TextEditingController();
-    pincodeController = TextEditingController();
-    cityController = TextEditingController();
-    _userRole = "";
+    nameController = TextEditingController(text: widget.user?.name);
+    emailController = TextEditingController(text: widget.user?.email);
+    mobileNoController = TextEditingController(text: widget.user?.phone);
+    stateController = TextEditingController(text: widget.user?.state);
+    addressController = TextEditingController(text: widget.user?.address);
+    pincodeController = TextEditingController(text: widget.user?.pincode);
+    cityController = TextEditingController(text: widget.user?.city);
+    _userRole = '';
   }
 
   @override
@@ -58,77 +68,30 @@ class _RegisterPageState extends State<RegisterPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: customAppBar(
-          titleText: 'Register',
-          context: context,
-          leading: IconButton(
-            onPressed: () {
-              Navigator.of(context).pop();
-              _bloc.close();
-            },
-            icon: const Icon(Icons.arrow_back),
-          )),
+      appBar: AppBar(
+        title: Text(
+          widget.user == null ? 'Register New User' : 'Edit Details',
+          style: GoogleFonts.pacifico(),
+        ),
+        foregroundColor: Colors.black87,
+        backgroundColor: Colors.white,
+        elevation: 1,
+        leading: IconButton(
+          onPressed: () {
+            BlocProvider.of<RegisterBloc>(context).add(BackButtonClicked());
+            Navigator.of(context).pop();
+          },
+          icon: const Icon(Icons.arrow_back),
+        ),
+      ),
       body: buildBody(context),
-    );
-  }
-
-  buildBody(BuildContext buildContext) {
-    return BlocConsumer<RegisterBloc, RegisterState>(
-      listener: (context, state) {
-        if (state is RegisterSuccess) {
-          showSnackbar(state.message, context);
-          _bloc.close();
-          Navigator.of(buildContext).pop();
-        }
-        if (state is RegisterFailed) {
-          showSnackbar(state.message, context);
-        }
-      },
-      builder: (context, state) {
-        if (state is RegisterLoading) {
-          return const Center(child: LoadingWidget());
-        }
-        return SingleChildScrollView(
-          child: Center(
-            child: Padding(
-              padding: const EdgeInsets.all(36.0),
-              child: Form(
-                key: _formKey,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    nameField(),
-                    const SizedBox(height: 20),
-                    emailField(),
-                    const SizedBox(height: 20),
-                    mobileNoField(),
-                    const SizedBox(height: 20),
-                    addressField(),
-                    const SizedBox(height: 20),
-                    stateField(),
-                    const SizedBox(height: 20),
-                    cityField(),
-                    const SizedBox(height: 20),
-                    pincodeField(),
-                    const SizedBox(height: 20),
-                    roleDropDown(),
-                    const SizedBox(height: 35),
-                    registerButton(),
-                    const SizedBox(height: 15),
-                  ],
-                ),
-              ),
-            ),
-          ),
-        );
-      },
     );
   }
 
   registerButton() => CustomButton(
         onPressed: () {
           if (_formKey.currentState!.validate()) {
-            final userModel = UserModel(
+            final userModel = RegisterUserModel(
               name: nameController.text,
               email: emailController.text,
               mobileNo: mobileNoController.text,
@@ -139,8 +102,7 @@ class _RegisterPageState extends State<RegisterPage> {
               role: _userRole.toLowerCase(),
             );
 
-            BlocProvider.of<RegisterBloc>(context)
-                .add(RegisterClicked(userModel: userModel));
+            _bloc.add(RegisterClicked(userModel: userModel));
           }
         },
         lable: 'Register',
@@ -280,10 +242,16 @@ class _RegisterPageState extends State<RegisterPage> {
         inputType: TextInputType.name,
       );
 
+  onRoleChanged(String role) {
+    setState(() {
+      _userRole = role;
+    });
+  }
+
   roleDropDown() => CustomDropDownFormField(
-        itemList: const ['Student', 'Librarian', 'Admin'],
+        itemList: [Role.student.lable, Role.librarian.lable, Role.admin.lable],
         onItemChanged: onRoleChanged,
-        currentValue: _userRole == "" ? null : _userRole,
+        currentValue: _userRole == '' ? null : _userRole,
         hint: 'Select A Role',
         validator: (value) {
           if (value == null || value.isEmpty) {
@@ -293,9 +261,83 @@ class _RegisterPageState extends State<RegisterPage> {
         },
       );
 
-  onRoleChanged(String role) {
-    setState(() {
-      _userRole = role;
-    });
+  buildBody(BuildContext buildContext) {
+    return BlocConsumer<RegisterBloc, RegisterState>(
+      listener: (context, state) {
+        if (state is RegisterSuccess) {
+          showSnackbar(state.message, context);
+          Navigator.of(buildContext).pop();
+        }
+        if (state is RegisterFailed) {
+          showSnackbar(state.message, context);
+        }
+      },
+      builder: (context, state) {
+        if (state is RegisterLoading) {
+          return const Center(child: LoadingWidget());
+        }
+        return SingleChildScrollView(
+          child: Center(
+            child: Padding(
+              padding: const EdgeInsets.all(36.0),
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    nameField(),
+                    const SizedBox(height: 20),
+                    emailField(),
+                    const SizedBox(height: 20),
+                    mobileNoField(),
+                    const SizedBox(height: 20),
+                    addressField(),
+                    const SizedBox(height: 20),
+                    stateField(),
+                    const SizedBox(height: 20),
+                    cityField(),
+                    const SizedBox(height: 20),
+                    pincodeField(),
+                    (widget.mode == PageMode.addNew)
+                        ? const SizedBox(height: 20)
+                        : Container(),
+                    (widget.mode == PageMode.addNew)
+                        ? roleDropDown()
+                        : Container(),
+                    const SizedBox(height: 35),
+                    (widget.mode == PageMode.addNew)
+                        ? registerButton()
+                        : updateButton(),
+                    const SizedBox(height: 15),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        );
+      },
+    );
   }
+
+  updateButton() => CustomButton(
+        onPressed: () {
+          if (_formKey.currentState!.validate()) {
+            final userModel = widget.user?.copyWith(
+              name: nameController.text,
+              email: emailController.text,
+              phone: mobileNoController.text,
+              address: addressController.text,
+              state: stateController.text,
+              city: cityController.text,
+              pincode: pincodeController.text,
+            );
+
+            _bloc.add(UpdateUserClicked(userModel: userModel!));
+          }
+        },
+        lable: 'Update',
+        context: context,
+        color: Colors.red,
+        textColor: Colors.white,
+      );
 }
