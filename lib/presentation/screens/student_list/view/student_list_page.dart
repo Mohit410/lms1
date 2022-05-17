@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:lms1/core/utils/utils.dart';
 import 'package:lms1/presentation/components/widgets/widgets.dart';
-import 'package:lms1/presentation/screens/register/view/view.dart';
 import 'package:lms1/presentation/screens/student_list/student_list.dart';
 import 'package:lms1/presentation/screens/user_detail/view/view.dart';
 
@@ -46,12 +44,6 @@ class _StudentListPageState extends State<StudentListPage> {
         elevation: 1,
         foregroundColor: Colors.black87,
         backgroundColor: Colors.white,
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Navigator.of(context).push(RegisterPage.route(null, PageMode.addNew));
-        },
-        child: const Icon(Icons.person_add),
       ),
       body: buildBody(context),
     );

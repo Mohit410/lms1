@@ -7,10 +7,12 @@ import 'package:lms1/core/utils/constants.dart';
 import 'package:lms1/data/datasources/datasources.dart';
 import 'package:lms1/data/repositories/repositories.dart';
 import 'package:lms1/domain/repositories/repositories.dart';
+import 'package:lms1/domain/usecases/get_upload_bulk.dart';
 import 'package:lms1/domain/usecases/usecases.dart';
 import 'package:lms1/presentation/screens/admin_list/bloc/admin_list_bloc.dart';
 import 'package:lms1/presentation/screens/book_list/bloc/book_list_bloc.dart';
 import 'package:lms1/presentation/screens/dashboard/bloc/dashboard_bloc.dart';
+import 'package:lms1/presentation/screens/home/home.dart';
 import 'package:lms1/presentation/screens/librarian_list/bloc/librarian_list_bloc.dart';
 import 'package:lms1/presentation/screens/login/login.dart';
 import 'package:lms1/presentation/screens/register/bloc/register_bloc.dart';
@@ -50,6 +52,7 @@ initDI() async {
   sl.registerFactory(() => GetStudentDetails(sl()));
   sl.registerFactory(() => GetUpdateUser(sl()));
   sl.registerFactory(() => GetUpdatePassword(sl()));
+  sl.registerFactory(() => GetUploadBulk(sl()));
 
   // blocs
   sl.registerLazySingleton(() => UserDetailBloc(sl()));
@@ -61,6 +64,7 @@ initDI() async {
   sl.registerLazySingleton(() => LoginBloc(sl()));
   sl.registerLazySingleton(() => RegisterBloc(sl(), sl()));
   sl.registerLazySingleton(() => UpdatePasswordBloc(sl()));
+  sl.registerLazySingleton(() => NavigationBloc(sl()));
 
   // core
   sl.registerLazySingleton<NetworkInfo>(() => NetworkInfoImpl(sl()));

@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:dio/dio.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:lms1/core/error/exception.dart';
 import 'package:lms1/core/network/http_client.dart';
 import 'package:lms1/core/response/response.dart';
@@ -26,7 +27,7 @@ class RemoteDataSourceImpl implements RemoteDatasource {
     );
     if (response.statusCode != 200) {
       throw ServerException();
-    } else if (response.data['success'].toString() == "true") {
+    } else if (response.data['success'] == true) {
       return CommonResponse.fromMap(response.data);
     } else {
       throw ServerExceptionWithMessage(response.data['message']);
@@ -113,9 +114,37 @@ class RemoteDataSourceImpl implements RemoteDatasource {
   }
 
   @override
-  Future<CommonResponse> updatePassword(UpdatePasswordBody body) {
-    // TODO: implement updatePassword
-    throw UnimplementedError();
+  Future<CommonResponse> updatePassword(
+      UpdatePasswordBody body, String email, String role) async {
+    final response = await dio.post(
+      'appUpdatePassword/$email/$role',
+      data: body.toMap(),
+    );
+    if (response.statusCode != 200) {
+      throw ServerException();
+    } else if (response.data['success'] == true) {
+      log(response.data.toString());
+      return CommonResponse.fromMap(response.data);
+    } else {
+      throw ServerExceptionWithMessage(response.data['message']);
+    }
+  }
+
+  @override
+  Future<CommonResponse> uploadBulk(String filePath,String fileName) async {
+    final formData = FormData.fromMap({
+      'excelfile': await MultipartFile.fromFile(filePath, filename: fileName),
+    });
+    final response = await dio.post('bulkUpload', data: formData);
+
+    if (response.statusCode != 200) {
+      throw ServerException();
+    } else if (response.data['success'] == true) {
+      log(response.data.toString());
+      return CommonResponse.fromMap(response.data);
+    } else {
+      throw ServerExceptionWithMessage(response.data['message']);
+    }
   }
 }
 
@@ -125,11 +154,13 @@ abstract class RemoteDatasource {
 
   // user
   Future<CommonResponse> createUser(RegisterUserModel user);
+  Future<CommonResponse> uploadBulk(String filePath,String fileName);
   Future<UserListResponse> getUserList();
   Future<AdminDashboardResponse> getAdminDashboardData();
   Future<StudentDetailResponse> getStudentDetails(String email);
   Future<CommonResponse> updateUser(String role, UserModel body);
-  Future<CommonResponse> updatePassword(UpdatePasswordBody body);
+  Future<CommonResponse> updatePassword(
+      UpdatePasswordBody body, String email, String role);
 
   // books
   Future<BookListResponse> getBooks();

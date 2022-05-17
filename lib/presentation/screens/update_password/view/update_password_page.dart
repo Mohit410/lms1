@@ -64,6 +64,7 @@ class _UpdatePasswordPageState extends State<UpdatePasswordPage> {
     return BlocConsumer<UpdatePasswordBloc, UpdatePasswordState>(
       listener: (context, state) {
         if (state is PasswordUpdateSucsess) {
+          showSnackbar(state.message, buildContext);
           Navigator.of(buildContext).pop();
         }
         if (state is PasswordUpdateFailed) {
@@ -71,6 +72,9 @@ class _UpdatePasswordPageState extends State<UpdatePasswordPage> {
         }
       },
       builder: (context, state) {
+        if (state is PasswordUpdateLoading) {
+          return const Center(child: LoadingWidget());
+        }
         return Center(
           child: Padding(
             padding: const EdgeInsets.all(36.0),
@@ -117,7 +121,11 @@ class _UpdatePasswordPageState extends State<UpdatePasswordPage> {
 
   newPasswordField() => CustomTextField(
         controller: newPasswordController,
-        validator: (value) {},
+        validator: (value) {
+          if (value == null || value.isEmpty) {
+            return 'Please enter new password';
+          }
+        },
         autovalidateMode: AutovalidateMode.onUserInteraction,
         prefixIcon: const Icon(Icons.vpn_key),
         hintText: 'Enter New Password',
@@ -146,7 +154,15 @@ class _UpdatePasswordPageState extends State<UpdatePasswordPage> {
 
   updateButton() => CustomButton(
         onPressed: () {
-          if (_formKey.currentState!.validate()) {}
+          if (_formKey.currentState!.validate()) {
+            _bloc.add(UpdatePasswordClicked(
+              email: widget.email,
+              role: widget.role,
+              oldPassword: oldPasswordController.text,
+              newPassword: newPasswordController.text,
+              confirmPassword: confirmPasswordController.text,
+            ));
+          }
         },
         lable: 'Update Password',
         context: context,

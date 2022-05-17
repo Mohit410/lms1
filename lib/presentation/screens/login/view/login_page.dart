@@ -4,7 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:lms1/core/utils/utils.dart';
 import 'package:lms1/presentation/components/utils/helper.dart';
 import 'package:lms1/presentation/components/widgets/widgets.dart';
-import 'package:lms1/presentation/screens/home/home_page.dart';
+import 'package:lms1/presentation/screens/home/view/home_page.dart';
 import 'package:lms1/presentation/screens/login/login.dart';
 
 class LoginPage extends StatefulWidget {

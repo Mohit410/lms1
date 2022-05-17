@@ -1,3 +1,4 @@
+import 'package:file_picker/src/platform_file.dart';
 import 'package:lms1/core/error/exception.dart';
 import 'package:lms1/core/response/response.dart';
 import 'package:lms1/data/datasources/datasources.dart';
@@ -82,9 +83,21 @@ class UserReposiotryImpl implements UserRepository {
 
   @override
   Future<Either<Failure, CommonResponse>> updatePassword(
-      UpdatePasswordBody body) async {
+      UpdatePasswordBody body, String email, String role) async {
     try {
-      final response = await _datasource.updatePassword(body);
+      final response = await _datasource.updatePassword(body, email, role);
+      return Right(response);
+    } on ServerExceptionWithMessage catch (e) {
+      return Left(ServerFailureWithMessage(e.message));
+    } on ServerException {
+      return Left(ServerFailure());
+    }
+  }
+
+  @override
+  Future<Either<Failure, CommonResponse>> uploadBulkUsers(PlatformFile file) async {
+    try {
+      final response = await _datasource.uploadBulk(file.path!, file.name);
       return Right(response);
     } on ServerExceptionWithMessage catch (e) {
       return Left(ServerFailureWithMessage(e.message));

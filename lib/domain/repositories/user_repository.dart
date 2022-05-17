@@ -1,4 +1,5 @@
 import 'package:dartz/dartz.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:lms1/core/error/failure.dart';
 import 'package:lms1/core/response/response.dart';
 import 'package:lms1/data/models/models.dart';
@@ -18,5 +19,8 @@ abstract class UserRepository {
   Future<Either<Failure, CommonResponse>> updateUser(
       String role, UserModel body);
 
-  Future<Either<Failure, CommonResponse>> updatePassword(UpdatePasswordBody body);
+  Future<Either<Failure, CommonResponse>> updatePassword(
+      UpdatePasswordBody body, String email, String role);
+
+  Future<Either<Failure, CommonResponse>> uploadBulkUsers(PlatformFile file);
 }

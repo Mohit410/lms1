@@ -13,6 +13,6 @@ class GetUpdatePassword extends UseCase<CommonResponse, UpdatePasswordBody> {
   @override
   Future<Either<Failure, CommonResponse>> call(
       UpdatePasswordBody params) async {
-    return await _repository.updatePassword(params);
+    return await _repository.updatePassword(params, params.email, params.role);
   }
 }
