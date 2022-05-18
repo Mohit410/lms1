@@ -11,6 +11,7 @@ class NavigationBloc extends Bloc<NavigationEvent, NavigationState> {
   final GetUploadBulk _getUploadBulk;
   NavigationBloc(this._getUploadBulk) : super(NavigationInitial()) {
     on<UploadBulkUsers>((event, emit) async {
+      emit(Uploading());
       final result = await _getUploadBulk(event.file);
 
       result.fold((failure) {

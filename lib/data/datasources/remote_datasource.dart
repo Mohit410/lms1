@@ -6,6 +6,7 @@ import 'package:lms1/core/error/exception.dart';
 import 'package:lms1/core/network/http_client.dart';
 import 'package:lms1/core/response/response.dart';
 import 'package:lms1/core/utils/user_preferences.dart';
+import 'package:lms1/data/models/book_details_response.dart';
 import 'package:lms1/data/models/book_list_response.dart';
 import 'package:lms1/data/models/models.dart';
 import 'package:lms1/data/models/user_detail_response.dart';
@@ -131,7 +132,7 @@ class RemoteDataSourceImpl implements RemoteDatasource {
   }
 
   @override
-  Future<CommonResponse> uploadBulk(String filePath,String fileName) async {
+  Future<CommonResponse> uploadBulk(String filePath, String fileName) async {
     final formData = FormData.fromMap({
       'excelfile': await MultipartFile.fromFile(filePath, filename: fileName),
     });
@@ -146,6 +147,20 @@ class RemoteDataSourceImpl implements RemoteDatasource {
       throw ServerExceptionWithMessage(response.data['message']);
     }
   }
+
+  @override
+  Future<BookDetailsResponse> getBookDetails(String bookId) async {
+    final response = await dio.get('appListIssuedBooks/$bookId');
+
+    if (response.statusCode != 200) {
+      throw ServerException();
+    } else if (response.data['success'] == true) {
+      log(response.data.toString());
+      return BookDetailsResponse.fromMap(response.data);
+    } else {
+      throw ServerExceptionWithMessage(response.data['message']);
+    }
+  }
 }
 
 abstract class RemoteDatasource {
@@ -154,7 +169,7 @@ abstract class RemoteDatasource {
 
   // user
   Future<CommonResponse> createUser(RegisterUserModel user);
-  Future<CommonResponse> uploadBulk(String filePath,String fileName);
+  Future<CommonResponse> uploadBulk(String filePath, String fileName);
   Future<UserListResponse> getUserList();
   Future<AdminDashboardResponse> getAdminDashboardData();
   Future<StudentDetailResponse> getStudentDetails(String email);
@@ -164,4 +179,5 @@ abstract class RemoteDatasource {
 
   // books
   Future<BookListResponse> getBooks();
+  Future<BookDetailsResponse> getBookDetails(String bookId);
 }

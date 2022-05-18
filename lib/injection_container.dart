@@ -3,22 +3,21 @@ import 'package:dio/dio.dart';
 import 'package:get_it/get_it.dart';
 import 'package:lms1/core/network/http_client.dart';
 import 'package:lms1/core/network/network_info.dart';
-import 'package:lms1/core/utils/constants.dart';
 import 'package:lms1/data/datasources/datasources.dart';
 import 'package:lms1/data/repositories/repositories.dart';
 import 'package:lms1/domain/repositories/repositories.dart';
-import 'package:lms1/domain/usecases/get_upload_bulk.dart';
 import 'package:lms1/domain/usecases/usecases.dart';
-import 'package:lms1/presentation/screens/admin_list/bloc/admin_list_bloc.dart';
-import 'package:lms1/presentation/screens/book_list/bloc/book_list_bloc.dart';
-import 'package:lms1/presentation/screens/dashboard/bloc/dashboard_bloc.dart';
+import 'package:lms1/presentation/screens/admin_list/admin_list.dart';
+import 'package:lms1/presentation/screens/book_details/book_details.dart';
+import 'package:lms1/presentation/screens/book_list/book_list.dart';
+import 'package:lms1/presentation/screens/dashboard/dashboard.dart';
 import 'package:lms1/presentation/screens/home/home.dart';
-import 'package:lms1/presentation/screens/librarian_list/bloc/librarian_list_bloc.dart';
+import 'package:lms1/presentation/screens/librarian_list/librarian_list.dart';
 import 'package:lms1/presentation/screens/login/login.dart';
-import 'package:lms1/presentation/screens/register/bloc/register_bloc.dart';
-import 'package:lms1/presentation/screens/student_list/bloc/student_list_bloc.dart';
+import 'package:lms1/presentation/screens/register/register.dart';
+import 'package:lms1/presentation/screens/student_list/student_list.dart';
 import 'package:lms1/presentation/screens/update_password/update_password.dart';
-import 'package:lms1/presentation/screens/user_detail/bloc/user_detail_bloc.dart';
+import 'package:lms1/presentation/screens/user_detail/user_detail.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 final sl = GetIt.instance;
@@ -53,6 +52,7 @@ initDI() async {
   sl.registerFactory(() => GetUpdateUser(sl()));
   sl.registerFactory(() => GetUpdatePassword(sl()));
   sl.registerFactory(() => GetUploadBulk(sl()));
+  sl.registerFactory(() => GetBookDetails(sl()));
 
   // blocs
   sl.registerLazySingleton(() => UserDetailBloc(sl()));
@@ -65,6 +65,7 @@ initDI() async {
   sl.registerLazySingleton(() => RegisterBloc(sl(), sl()));
   sl.registerLazySingleton(() => UpdatePasswordBloc(sl()));
   sl.registerLazySingleton(() => NavigationBloc(sl()));
+  sl.registerLazySingleton(() => BookDetailsBloc(sl()));
 
   // core
   sl.registerLazySingleton<NetworkInfo>(() => NetworkInfoImpl(sl()));

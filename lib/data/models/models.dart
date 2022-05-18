@@ -6,3 +6,4 @@ export 'user_model.dart';
 export 'user_list_reponse.dart';
 export 'dashboard_response.dart';
 export 'update_password_body.dart';
+export 'book_details_response.dart';

@@ -123,8 +123,7 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  BlocConsumer<NavigationBloc, NavigationState> buildBody(
-      BuildContext buildContext) {
+  buildBody(BuildContext buildContext) {
     return BlocConsumer<NavigationBloc, NavigationState>(
       listener: (context, state) {
         if (state is Uploading) {

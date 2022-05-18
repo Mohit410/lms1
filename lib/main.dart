@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:lms1/core/network/http_client.dart';
 import 'package:lms1/core/utils/user_preferences.dart';
 import 'package:lms1/presentation/screens/admin_list/bloc/admin_list_bloc.dart';
+import 'package:lms1/presentation/screens/book_details/book_details.dart';
 import 'package:lms1/presentation/screens/dashboard/bloc/dashboard_bloc.dart';
 import 'package:lms1/presentation/screens/login/login.dart';
 import 'package:lms1/presentation/screens/update_password/update_password.dart';
@@ -34,16 +35,17 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
-        BlocProvider(create: (context) => sl<LoginBloc>()),
-        BlocProvider(create: (context) => sl<RegisterBloc>()),
-        BlocProvider(create: (context) => sl<DashboardBloc>()),
-        BlocProvider(create: (context) => sl<AdminListBloc>()),
-        BlocProvider(create: (context) => sl<StudentListBloc>()),
-        BlocProvider(create: (context) => sl<LibrarianListBloc>()),
-        BlocProvider(create: (context) => sl<BookListBloc>()),
-        BlocProvider(create: (context) => sl<UserDetailBloc>()),
-        BlocProvider(create: (context) => sl<UpdatePasswordBloc>()),
-        BlocProvider(create: (context) => sl<NavigationBloc>()),
+        BlocProvider(create: (_) => sl<LoginBloc>()),
+        BlocProvider(create: (_) => sl<RegisterBloc>()),
+        BlocProvider(create: (_) => sl<DashboardBloc>()),
+        BlocProvider(create: (_) => sl<AdminListBloc>()),
+        BlocProvider(create: (_) => sl<StudentListBloc>()),
+        BlocProvider(create: (_) => sl<LibrarianListBloc>()),
+        BlocProvider(create: (_) => sl<BookListBloc>()),
+        BlocProvider(create: (_) => sl<UserDetailBloc>()),
+        BlocProvider(create: (_) => sl<UpdatePasswordBloc>()),
+        BlocProvider(create: (_) => sl<NavigationBloc>()),
+        BlocProvider(create: (_) => sl<BookDetailsBloc>()),
       ],
       child: const MaterialApp(
         debugShowCheckedModeBanner: false,

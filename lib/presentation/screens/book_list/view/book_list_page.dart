@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lms1/core/utils/utils.dart';
 import 'package:lms1/presentation/components/widgets/widgets.dart';
+import 'package:lms1/presentation/screens/book_details/book_details.dart';
 import 'package:lms1/presentation/screens/book_list/book_list.dart';
 
 class BookListPage extends StatefulWidget {
@@ -98,7 +99,9 @@ class _BookListPageState extends State<BookListPage> {
               ],
             ),
             //leading: const Icon(Icons.book),
-            onTap: () {},
+            onTap: () => Navigator.of(context).push(
+              BookDetailsPage.route(state.books[index].bookId),
+            ),
           );
         },
       );

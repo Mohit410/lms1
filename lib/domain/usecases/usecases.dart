@@ -6,3 +6,5 @@ export 'get_admin_dashboard.dart';
 export 'get_student_details.dart';
 export 'get_update_user.dart';
 export 'get_update_password.dart';
+export 'get_book_details.dart';
+export 'get_upload_bulk.dart';
