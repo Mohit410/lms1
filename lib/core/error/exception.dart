@@ -1,7 +1,8 @@
-class ServerExceptionWithMessage implements Exception {
+class ServerExceptionWithMessage<T> implements Exception {
   final String message;
+  final T? data;
 
-  ServerExceptionWithMessage(this.message);
+  ServerExceptionWithMessage(this.message, {this.data});
   @override
   String toString() {
     return message;

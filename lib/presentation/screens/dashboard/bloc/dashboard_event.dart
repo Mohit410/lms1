@@ -7,5 +7,5 @@ abstract class DashboardEvent extends Equatable {
   List<Object> get props => [];
 }
 
-class FetchData extends DashboardEvent {}
+class FetchDashboardData extends DashboardEvent {}
 

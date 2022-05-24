@@ -7,6 +7,7 @@ import 'package:lms1/data/datasources/datasources.dart';
 import 'package:lms1/data/repositories/repositories.dart';
 import 'package:lms1/domain/repositories/repositories.dart';
 import 'package:lms1/domain/usecases/usecases.dart';
+import 'package:lms1/presentation/screens/add_new_book/add_new_book.dart';
 import 'package:lms1/presentation/screens/admin_list/admin_list.dart';
 import 'package:lms1/presentation/screens/book_details/book_details.dart';
 import 'package:lms1/presentation/screens/book_list/book_list.dart';
@@ -39,6 +40,7 @@ initDI() async {
   // repositories
   sl.registerFactory<BookRepository>(() => BookRepositoryImpl(sl()));
   sl.registerFactory<UserRepository>(() => UserReposiotryImpl(sl()));
+  sl.registerFactory<LibrarianRepository>(() => LibrarianRepositoryImpl(sl()));
   sl.registerFactory<AuthenticationRepository>(
       () => AuthenticationRepositoryImpl(sl()));
 
@@ -53,19 +55,23 @@ initDI() async {
   sl.registerFactory(() => GetUpdatePassword(sl()));
   sl.registerFactory(() => GetUploadBulk(sl()));
   sl.registerFactory(() => GetBookDetails(sl()));
-
+  sl.registerFactory(() => GetLibrarianDashBoard(sl()));
+  sl.registerFactory(() => GetAddBook(sl()));
+  sl.registerFactory(() => GetUploadBulkBooks(sl()));
+  sl.registerFactory(() => GetUpdateBook(sl()));
   // blocs
   sl.registerLazySingleton(() => UserDetailBloc(sl()));
   sl.registerLazySingleton(() => StudentListBloc(sl()));
   sl.registerLazySingleton(() => LibrarianListBloc(sl()));
   sl.registerLazySingleton(() => AdminListBloc(sl()));
-  sl.registerLazySingleton(() => DashboardBloc(sl()));
+  sl.registerLazySingleton(() => DashboardBloc(sl(), sl()));
   sl.registerLazySingleton(() => BookListBloc(sl()));
   sl.registerLazySingleton(() => LoginBloc(sl()));
   sl.registerLazySingleton(() => RegisterBloc(sl(), sl()));
   sl.registerLazySingleton(() => UpdatePasswordBloc(sl()));
-  sl.registerLazySingleton(() => NavigationBloc(sl()));
+  sl.registerLazySingleton(() => NavigationBloc(sl(), sl()));
   sl.registerLazySingleton(() => BookDetailsBloc(sl()));
+  sl.registerLazySingleton(() => AddNewBookBloc(sl(), sl()));
 
   // core
   sl.registerLazySingleton<NetworkInfo>(() => NetworkInfoImpl(sl()));

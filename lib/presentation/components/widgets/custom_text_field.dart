@@ -15,6 +15,7 @@ class CustomTextField extends StatelessWidget {
   final bool? isObsecureText;
   final VoidCallback? onPasswordshow;
   final bool? isPasswordField;
+  final bool? readOnly;
   const CustomTextField({
     Key? key,
     required this.controller,
@@ -30,6 +31,7 @@ class CustomTextField extends StatelessWidget {
     this.isObsecureText = false,
     this.onPasswordshow,
     this.isPasswordField = false,
+    this.readOnly = false,
   }) : super(key: key);
 
   @override
@@ -45,6 +47,7 @@ class CustomTextField extends StatelessWidget {
       validator: (value) => validator(value),
       textInputAction: TextInputAction.next,
       maxLength: maxLength,
+      readOnly: readOnly ?? false,
       decoration: InputDecoration(
           prefixText: prefixText,
           prefixIcon: prefixIcon,

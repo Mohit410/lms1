@@ -4,12 +4,13 @@ import 'package:lms1/core/usecase/usecase.dart';
 import 'package:lms1/data/models/models.dart';
 import 'package:lms1/domain/repositories/repositories.dart';
 
-class GetAdminDashboard extends UseCase<DashboardResponse, NoParams> {
-  final UserRepository _repository;
+class GetLibrarianDashBoard extends UseCase<DashboardResponse, NoParams> {
+  final LibrarianRepository _repository;
 
-  GetAdminDashboard(this._repository);
+  GetLibrarianDashBoard(this._repository);
+
   @override
   Future<Either<Failure, DashboardResponse>> call(NoParams params) async {
-    return await _repository.getAdminDashboardData();
+    return await _repository.getDashboardData();
   }
 }

@@ -29,7 +29,7 @@ class AppInterceptor extends InterceptorsWrapper {
   @override
   void onRequest(RequestOptions options, RequestInterceptorHandler handler) {
     log(options.baseUrl + options.path);
-    final accessToken = UserPreferences.getUserToken();
+    final accessToken = UserPreferences.userToken;
     if (accessToken == null) {
       return super.onRequest(options, handler);
     }

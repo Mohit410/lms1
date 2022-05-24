@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:lms1/core/utils/utils.dart';
 import 'package:lms1/presentation/components/utils/helper.dart';
 
 import 'package:lms1/presentation/components/widgets/widgets.dart';
@@ -41,21 +42,33 @@ class _UpdatePasswordPageState extends State<UpdatePasswordPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          'Update Password',
-          style: GoogleFonts.pacifico(),
-        ),
-        foregroundColor: Colors.black87,
-        backgroundColor: Colors.white,
-        elevation: 1,
-        leading: IconButton(
-          onPressed: () {
-            Navigator.of(context).pop();
-          },
-          icon: const Icon(Icons.arrow_back),
-        ),
-      ),
+      appBar: (UserPreferences.userRole == Role.admin.name)
+          ? AppBar(
+              title: Text(
+                'Update Password',
+                style: GoogleFonts.pacifico(),
+              ),
+              foregroundColor: Colors.black87,
+              backgroundColor: Colors.white,
+              elevation: 1,
+              leading: IconButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                icon: const Icon(Icons.arrow_back),
+              ),
+            )
+          : AppBar(
+              title: Text(
+                'Update Password',
+                style: GoogleFonts.pacifico(),
+              ),
+              centerTitle: true,
+              foregroundColor: Colors.black87,
+              backgroundColor: Colors.white,
+              elevation: 1,
+              automaticallyImplyLeading: false,
+            ),
       body: buildBody(context),
     );
   }

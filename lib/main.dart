@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:lms1/core/network/http_client.dart';
 import 'package:lms1/core/utils/user_preferences.dart';
+import 'package:lms1/presentation/screens/add_new_book/add_new_book.dart';
 import 'package:lms1/presentation/screens/admin_list/bloc/admin_list_bloc.dart';
 import 'package:lms1/presentation/screens/book_details/book_details.dart';
 import 'package:lms1/presentation/screens/dashboard/bloc/dashboard_bloc.dart';
@@ -46,11 +47,13 @@ class MyApp extends StatelessWidget {
         BlocProvider(create: (_) => sl<UpdatePasswordBloc>()),
         BlocProvider(create: (_) => sl<NavigationBloc>()),
         BlocProvider(create: (_) => sl<BookDetailsBloc>()),
+        BlocProvider(create: (_) => sl<AddNewBookBloc>()),
       ],
-      child: const MaterialApp(
+      child: MaterialApp(
         debugShowCheckedModeBanner: false,
+        theme: ThemeData(useMaterial3: true).copyWith(),
         title: "Library Management App",
-        home: Scaffold(
+        home: const Scaffold(
           body: SafeArea(
             child: Center(
               child: LoginPage(),

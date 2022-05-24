@@ -2,14 +2,10 @@ import 'package:file_picker/src/platform_file.dart';
 import 'package:lms1/core/error/exception.dart';
 import 'package:lms1/core/response/response.dart';
 import 'package:lms1/data/datasources/datasources.dart';
-import 'package:lms1/data/models/dashboard_response.dart';
-import 'package:lms1/data/models/register_user_model.dart';
+import 'package:lms1/data/models/models.dart';
 import 'package:lms1/core/error/failure.dart';
 import 'package:dartz/dartz.dart';
-import 'package:lms1/data/models/update_password_body.dart';
 import 'package:lms1/data/models/user_detail_response.dart';
-import 'package:lms1/data/models/user_list_reponse.dart';
-import 'package:lms1/data/models/user_model.dart';
 import 'package:lms1/domain/repositories/repositories.dart';
 
 class UserReposiotryImpl implements UserRepository {
@@ -43,7 +39,7 @@ class UserReposiotryImpl implements UserRepository {
   }
 
   @override
-  Future<Either<Failure, AdminDashboardResponse>>
+  Future<Either<Failure, DashboardResponse>>
       getAdminDashboardData() async {
     try {
       final response = await _datasource.getAdminDashboardData();
@@ -95,12 +91,14 @@ class UserReposiotryImpl implements UserRepository {
   }
 
   @override
-  Future<Either<Failure, CommonResponse>> uploadBulkUsers(PlatformFile file) async {
+  Future<Either<Failure, BulkUploadResponse>> uploadBulkUsers(
+      PlatformFile file) async {
     try {
       final response = await _datasource.uploadBulk(file.path!, file.name);
       return Right(response);
-    } on ServerExceptionWithMessage catch (e) {
-      return Left(ServerFailureWithMessage(e.message));
+    } on ServerExceptionWithMessage<List<ExcelRowResponse>> catch (e) {
+      return Left(ServerFailureWithMessage<List<ExcelRowResponse>>(e.message,
+          data: e.data));
     } on ServerException {
       return Left(ServerFailure());
     }

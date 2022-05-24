@@ -5,6 +5,8 @@ void showSnackbar(String message, BuildContext context) {
   ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
 }
 
+const rupeeSymbol = "\u{20B9}";
+
 headingText(String value) => Text(
       value,
       style: GoogleFonts.openSans(

@@ -15,3 +15,14 @@ class UploadBulkUsers extends NavigationEvent {
   @override
   List<Object> get props => [file];
 }
+
+class UploadBulkBooks extends NavigationEvent {
+  final PlatformFile file;
+
+  const UploadBulkBooks(this.file);
+
+  @override
+  List<Object> get props => [file];
+
+
+}

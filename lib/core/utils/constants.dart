@@ -11,6 +11,15 @@ enum Role {
   const Role(this.lable);
 }
 
+enum BookCategory {
+  education('Education'),
+  music('Music'),
+  sport('Sport');
+
+  final String lable;
+  const BookCategory(this.lable);
+}
+
 enum HttpErrors {
   success,
   created,

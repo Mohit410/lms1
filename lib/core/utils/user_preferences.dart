@@ -1,3 +1,4 @@
+import 'package:lms1/core/utils/constants.dart';
 import 'package:lms1/injection_container.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -23,15 +24,15 @@ class UserPreferences {
   static Future setUserToken(String token) async =>
       await _preferences?.setString(USER_TOKEN_KEY, token);
 
-  static String? getUserName() => _preferences?.getString(USER_NAME_KEY);
+  static String? get userName => _preferences?.getString(USER_NAME_KEY);
 
-  static String? getUserEmail() => _preferences?.getString(USER_EMAIL_KEY);
+  static String? get userEmail => _preferences?.getString(USER_EMAIL_KEY);
 
-  static String? getUserToken() => _preferences?.getString(USER_TOKEN_KEY);
+  static String? get userToken => _preferences?.getString(USER_TOKEN_KEY);
 
-  static String? getUserRole() => _preferences?.getString(USER_ROLE_KEY);
+  static String? get userRole => _preferences?.getString(USER_ROLE_KEY);
 
   static Future clearPreferences() async => await _preferences?.clear();
 
-  static bool isAdmin() => UserPreferences.getUserRole() == 'admin';
+  static bool isAdmin() => UserPreferences.userRole == Role.admin.name;
 }

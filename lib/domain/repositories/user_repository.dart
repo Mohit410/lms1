@@ -11,7 +11,7 @@ abstract class UserRepository {
 
   Future<Either<Failure, UserListResponse>> getUserList();
 
-  Future<Either<Failure, AdminDashboardResponse>> getAdminDashboardData();
+  Future<Either<Failure, DashboardResponse>> getAdminDashboardData();
 
   Future<Either<Failure, StudentDetailResponse>> getStudentDetails(
       String email);
@@ -22,5 +22,5 @@ abstract class UserRepository {
   Future<Either<Failure, CommonResponse>> updatePassword(
       UpdatePasswordBody body, String email, String role);
 
-  Future<Either<Failure, CommonResponse>> uploadBulkUsers(PlatformFile file);
+  Future<Either<Failure, BulkUploadResponse>> uploadBulkUsers(PlatformFile file);
 }

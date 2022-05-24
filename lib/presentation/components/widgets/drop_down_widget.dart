@@ -6,21 +6,23 @@ class CustomDropDownFormField extends StatelessWidget {
   final String hint;
   final Function(String) onItemChanged;
   final Function(String?) validator;
+  final bool enabled;
 
-  const CustomDropDownFormField(
-      {Key? key,
-      required this.itemList,
-      required this.onItemChanged,
-      required this.currentValue,
-      required this.hint,
-      required this.validator})
-      : super(key: key);
+  const CustomDropDownFormField({
+    Key? key,
+    required this.itemList,
+    required this.onItemChanged,
+    required this.currentValue,
+    required this.hint,
+    required this.validator,
+    this.enabled = true,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        border: Border.all(color: Colors.white, width: 1),
+        border: Border.all(color: Colors.grey, width: 1),
         borderRadius: BorderRadius.circular(10),
       ),
       width: MediaQuery.of(context).size.width,
@@ -41,7 +43,7 @@ class CustomDropDownFormField extends StatelessWidget {
             autovalidateMode: AutovalidateMode.onUserInteraction,
             validator: (value) => validator(value),
             value: currentValue,
-            onChanged: (value) => onItemChanged(value!),
+            onChanged: enabled ? (value) => onItemChanged(value!) : null,
             decoration: InputDecoration(
                 prefixIcon: const Icon(Icons.category_rounded),
                 labelText: hint),

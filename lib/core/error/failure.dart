@@ -5,15 +5,14 @@ abstract class Failure extends Equatable {
   List<Object?> get props => [];
 }
 
-class ServerFailureWithMessage extends Failure {
+class ServerFailureWithMessage<T> extends Failure {
   final String message;
+  final T? data;
 
-  ServerFailureWithMessage(this.message);
+  ServerFailureWithMessage(this.message, {this.data});
 }
 
-class ServerFailure extends Failure {
-
-}
+class ServerFailure extends Failure {}
 
 class CacheFailure extends Failure {
   final dynamic error;

@@ -16,7 +16,7 @@ class BookListResponse extends Equatable {
     final result = <String, dynamic>{};
 
     result.addAll({'success': success});
-    result.addAll({'book': books.map((x) => x.toMap()).toList()});
+    result.addAll({'books': books.map((x) => x.toMap()).toList()});
 
     return result;
   }
@@ -25,7 +25,7 @@ class BookListResponse extends Equatable {
     return BookListResponse(
       success: map['success'] ?? false,
       books:
-          List<BookModel>.from(map['book']?.map((x) => BookModel.fromMap(x))),
+          List<BookModel>.from(map['books']?.map((x) => BookModel.fromMap(x))),
     );
   }
 

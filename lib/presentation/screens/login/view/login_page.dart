@@ -26,7 +26,7 @@ class _LoginPageState extends State<LoginPage> {
   void initState() {
     super.initState();
     emailController =
-        TextEditingController(text: UserPreferences.getUserEmail());
+        TextEditingController(text: UserPreferences.userEmail);
     passwordController = TextEditingController();
     _isPasswordVisible = false;
   }

@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lms1/core/utils/utils.dart';
+import 'package:lms1/data/models/models.dart';
 import 'package:lms1/presentation/components/widgets/widgets.dart';
+import 'package:lms1/presentation/screens/add_new_book/add_new_book.dart';
 import 'package:lms1/presentation/screens/book_details/book_details.dart';
 import 'package:lms1/presentation/screens/book_list/book_list.dart';
+import 'package:lms1/presentation/screens/book_list/view/components/book_list_table.dart';
 
 class BookListPage extends StatefulWidget {
   const BookListPage({Key? key}) : super(key: key);
@@ -72,36 +76,39 @@ class _BookListPageState extends State<BookListPage> {
         physics: const AlwaysScrollableScrollPhysics(),
         separatorBuilder: (context, __) => const Divider(height: 1),
         itemBuilder: (context, index) {
-          return ListTile(
-            isThreeLine: true,
-            title: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+          return Slidable(
+            endActionPane: ActionPane(
+              motion: const ScrollMotion(),
               children: [
-                Text("Title : ${state.books[index].title}"),
-                Text("Name : ${state.books[index].name}"),
-              ],
-            ),
-            subtitle: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text("Author: ${state.books[index].author}"),
-                Row(
-                  children: [
-                    Expanded(
-                      child: Text(
-                          "Available Copies: ${state.books[index].availableCopies}"),
-                    ),
-                    Expanded(
-                      child: Text("Total Copies: ${state.books[index].copies}"),
-                    ),
-                  ],
+                SlidableAction(
+                  onPressed: (context) async {
+                    await Navigator.of(context)
+                        .push(BookDetailsPage.route(state.books[index].bookId));
+                    //.then((value) => _bloc.add(FetchBooks()));
+                  },
+                  backgroundColor: Colors.blue,
+                  foregroundColor: Colors.white,
+                  icon: Icons.view_agenda,
+                  label: 'Details',
                 ),
+                (UserPreferences.userRole == Role.librarian.name)
+                    ? SlidableAction(
+                        onPressed: (context) async {
+                          await Navigator.push(
+                                  context,
+                                  AddNewBookPage.route(
+                                      state.books[index], PageMode.edit))
+                              .then((value) => _bloc.add(FetchBooks()));
+                        },
+                        backgroundColor: Colors.red,
+                        foregroundColor: Colors.white,
+                        icon: Icons.edit,
+                        label: 'Edit',
+                      )
+                    : Container(),
               ],
             ),
-            //leading: const Icon(Icons.book),
-            onTap: () => Navigator.of(context).push(
-              BookDetailsPage.route(state.books[index].bookId),
-            ),
+            child: _getListTile(state.books[index]),
           );
         },
       );
@@ -117,4 +124,50 @@ class _BookListPageState extends State<BookListPage> {
       return Container();
     }
   }
+
+  _getListTile(BookModel book) => ListTile(
+        isThreeLine: true,
+        title: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text("Title : ${book.title}"),
+            Text("Name : ${book.name}"),
+          ],
+        ),
+        subtitle:
+            Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          Text("Author: ${book.author}"),
+          Row(
+            children: [
+              Expanded(
+                child: Text("Available Copies: ${book.availableCopies}"),
+              ),
+              Expanded(
+                child: Text("Total Copies: ${book.copies}"),
+              ),
+            ],
+          ),
+        ]),
+      );
+
+  _getBooksTable(List<BookModel> books) => PaginatedDataTable(
+        columns: const [
+          DataColumn(label: Text('Id')),
+          DataColumn(label: Text('Title')),
+          DataColumn(label: Text('Name')),
+          DataColumn(label: Text('Publisher')),
+          DataColumn(label: Text('Author')),
+          DataColumn(label: Text('Category')),
+          DataColumn(label: Text('Total Copies')),
+          DataColumn(label: Text('Available Copies')),
+          DataColumn(label: Text('Price (Rs.)')),
+          DataColumn(label: Text('Action')),
+        ],
+        source: BookListTable(books),
+        header: const Text('Books'),
+        horizontalMargin: 10,
+        columnSpacing: 16,
+        rowsPerPage: 10,
+        showCheckboxColumn: false,
+      );
 }

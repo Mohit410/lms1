@@ -7,24 +7,22 @@ abstract class DashboardState extends Equatable {
   List<Object> get props => [];
 }
 
-class Loaded extends DashboardState {
-  final UserModel user;
-  final int totalUsers;
-  final int totalFine;
-  final int totalBooks;
-  const Loaded({
-    required this.totalUsers,
-    required this.totalFine,
-    required this.totalBooks,
-    required this.user,
-  });
+class DashboardLoaded extends DashboardState {
+  final DashboardResponse dashboardData;
+  const DashboardLoaded({required this.dashboardData});
+
+  @override
+  List<Object> get props => [dashboardData];
 }
 
-class Failed extends DashboardState {
+class DashboardFailed extends DashboardState {
   final String message;
-  const Failed({required this.message});
+  const DashboardFailed({required this.message});
+
+  @override
+  List<Object> get props => [message];
 }
 
-class Empty extends DashboardState {}
+class DashboardEmpty extends DashboardState {}
 
-class Loading extends DashboardState {}
+class DashboardLoading extends DashboardState {}
