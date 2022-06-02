@@ -9,6 +9,7 @@ import 'package:lms1/data/models/book_details_response.dart';
 import 'package:lms1/data/models/book_list_response.dart';
 import 'package:lms1/data/models/book_model.dart';
 import 'package:lms1/data/models/bulk_upload_error_response.dart';
+import 'package:lms1/data/models/issued_book_response.dart';
 import 'package:lms1/domain/repositories/book_repository.dart';
 
 class BookRepositoryImpl extends BookRepository {
@@ -72,6 +73,18 @@ class BookRepositoryImpl extends BookRepository {
     } on ServerExceptionWithMessage<List<BookRowResponse>> catch (e) {
       return Left(ServerFailureWithMessage<List<BookRowResponse>>(e.message,
           data: e.data));
+    } on ServerException {
+      return Left(ServerFailure());
+    }
+  }
+
+  @override
+  Future<Either<Failure, IssuedBookResponse>> getIssuedBookDetails(String email, String bookId) async{
+    try {
+      final response = await _datasource.getIssuedBookDetails(email, bookId);
+      return Right(response);
+    } on ServerExceptionWithMessage catch (e) {
+      return Left(ServerFailureWithMessage(e.message));
     } on ServerException {
       return Left(ServerFailure());
     }

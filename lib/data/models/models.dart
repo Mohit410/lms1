@@ -1,5 +1,4 @@
 export 'book_model.dart';
-export 'book_model.dart';
 export 'login_body.dart';
 export 'register_user_model.dart';
 export 'user_model.dart';
@@ -8,3 +7,9 @@ export 'dashboard_response.dart';
 export 'update_password_body.dart';
 export 'book_details_response.dart';
 export 'bulk_upload_error_response.dart';
+export 'issued_book_response.dart';
+export 'fine_details_response.dart';
+export 'student_dashboard_response.dart';
+export 'transaction_list_response.dart';
+export 'issued_book_response.dart';
+export 'fine_details_response.dart';

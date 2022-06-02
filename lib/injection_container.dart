@@ -11,11 +11,13 @@ import 'package:lms1/presentation/screens/add_new_book/add_new_book.dart';
 import 'package:lms1/presentation/screens/admin_list/admin_list.dart';
 import 'package:lms1/presentation/screens/book_details/book_details.dart';
 import 'package:lms1/presentation/screens/book_list/book_list.dart';
+import 'package:lms1/presentation/screens/collect_fine/collect_fine.dart';
 import 'package:lms1/presentation/screens/dashboard/dashboard.dart';
 import 'package:lms1/presentation/screens/home/home.dart';
 import 'package:lms1/presentation/screens/librarian_list/librarian_list.dart';
 import 'package:lms1/presentation/screens/login/login.dart';
 import 'package:lms1/presentation/screens/register/register.dart';
+import 'package:lms1/presentation/screens/return_book/return_book.dart';
 import 'package:lms1/presentation/screens/student_list/student_list.dart';
 import 'package:lms1/presentation/screens/update_password/update_password.dart';
 import 'package:lms1/presentation/screens/user_detail/user_detail.dart';
@@ -43,6 +45,7 @@ initDI() async {
   sl.registerFactory<LibrarianRepository>(() => LibrarianRepositoryImpl(sl()));
   sl.registerFactory<AuthenticationRepository>(
       () => AuthenticationRepositoryImpl(sl()));
+  sl.registerFactory<StudentRepository>(() => StudentRepositoryImpl(sl()));
 
   //  usecases
   sl.registerFactory(() => GetAdminDashboard(sl()));
@@ -59,19 +62,28 @@ initDI() async {
   sl.registerFactory(() => GetAddBook(sl()));
   sl.registerFactory(() => GetUploadBulkBooks(sl()));
   sl.registerFactory(() => GetUpdateBook(sl()));
+  sl.registerFactory(() => GetReturnBook(sl()));
+  sl.registerFactory(() => GetIssuedBookDetails(sl()));
+  sl.registerFactory(() => GetFineDetails(sl()));
+  sl.registerFactory(() => GetStudentDashboard(sl()));
+  sl.registerFactory(() => GetIssueBook(sl()));
+  sl.registerFactory(() => GetPayFine(sl()));
+
   // blocs
   sl.registerLazySingleton(() => UserDetailBloc(sl()));
   sl.registerLazySingleton(() => StudentListBloc(sl()));
   sl.registerLazySingleton(() => LibrarianListBloc(sl()));
   sl.registerLazySingleton(() => AdminListBloc(sl()));
-  sl.registerLazySingleton(() => DashboardBloc(sl(), sl()));
-  sl.registerLazySingleton(() => BookListBloc(sl()));
+  sl.registerLazySingleton(() => DashboardBloc(sl(), sl(), sl()));
+  sl.registerLazySingleton(() => BookListBloc(sl(), sl()));
   sl.registerLazySingleton(() => LoginBloc(sl()));
   sl.registerLazySingleton(() => RegisterBloc(sl(), sl()));
   sl.registerLazySingleton(() => UpdatePasswordBloc(sl()));
   sl.registerLazySingleton(() => NavigationBloc(sl(), sl()));
   sl.registerLazySingleton(() => BookDetailsBloc(sl()));
   sl.registerLazySingleton(() => AddNewBookBloc(sl(), sl()));
+  sl.registerLazySingleton(() => ReturnBookBloc(sl(), sl()));
+  sl.registerLazySingleton(() => CollectFineBloc(sl(), sl()));
 
   // core
   sl.registerLazySingleton<NetworkInfo>(() => NetworkInfoImpl(sl()));

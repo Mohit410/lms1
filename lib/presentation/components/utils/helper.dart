@@ -9,7 +9,7 @@ const rupeeSymbol = "\u{20B9}";
 
 headingText(String value) => Text(
       value,
-      style: GoogleFonts.openSans(
+      style: GoogleFonts.lato(
         fontSize: 12,
         fontWeight: FontWeight.w500,
       ),
@@ -18,9 +18,9 @@ headingText(String value) => Text(
 
 fieldText(String value) => Text(
       value,
-      style: GoogleFonts.openSans(
+      style: GoogleFonts.lato(
         fontSize: 16,
-        fontWeight: FontWeight.bold,
+        fontWeight: FontWeight.w700,
       ),
       textAlign: TextAlign.start,
     );

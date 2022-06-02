@@ -8,3 +8,12 @@ abstract class BookListEvent extends Equatable {
 }
 
 class FetchBooks extends BookListEvent {}
+
+class IssueBook extends BookListEvent {
+  final String bookId;
+
+  const IssueBook(this.bookId);
+
+  @override
+  List<Object> get props => [bookId];
+}

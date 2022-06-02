@@ -102,8 +102,9 @@ class LibrarianDashboardResponse extends DashboardResponse {
     result.addAll({
       'students_heavy_fine': studentsHeavyFine.map((x) => x.toMap()).toList()
     });
-    result.addAll(
-        {'unavailable_book_copies': unavailableBooks.map((x) => x.toMap()).toList()});
+    result.addAll({
+      'unavailable_book_copies': unavailableBooks.map((x) => x.toMap()).toList()
+    });
 
     return result;
   }
@@ -118,7 +119,8 @@ class LibrarianDashboardResponse extends DashboardResponse {
           map['students_heavy_fine']
               ?.map((x) => StudentHeavyFineModel.fromMap(x))),
       unavailableBooks: List<UnavailableBook>.from(
-          map['unavailable_book_copies']?.map((x) => UnavailableBook.fromMap(x))),
+          map['unavailable_book_copies']
+              ?.map((x) => UnavailableBook.fromMap(x))),
     );
   }
 

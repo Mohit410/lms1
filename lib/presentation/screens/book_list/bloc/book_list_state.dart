@@ -22,3 +22,15 @@ class Failed extends BookListState {
 
   const Failed(this.message);
 }
+
+class IssueBookSuccess extends BookListState {
+  final String message;
+
+  const IssueBookSuccess(this.message);
+}
+
+class IssueBookFailed extends BookListState {
+  final String message;
+
+  const IssueBookFailed(this.message);
+}

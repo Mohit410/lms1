@@ -15,4 +15,7 @@ abstract class BookRepository {
 
   Future<Either<Failure, BulkBookUploadResponse>> uploadBulkBooks(
       PlatformFile file);
+
+  Future<Either<Failure, IssuedBookResponse>> getIssuedBookDetails(
+      String email, String bookId);
 }

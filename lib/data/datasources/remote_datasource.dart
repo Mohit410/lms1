@@ -1,9 +1,9 @@
 import 'dart:developer';
-
 import 'package:dio/dio.dart';
 import 'package:lms1/core/error/exception.dart';
 import 'package:lms1/core/network/http_client.dart';
 import 'package:lms1/core/response/response.dart';
+import 'package:lms1/core/utils/utils.dart';
 import 'package:lms1/data/models/book_list_response.dart';
 import 'package:lms1/data/models/models.dart';
 import 'package:lms1/data/models/user_detail_response.dart';
@@ -32,8 +32,8 @@ class RemoteDataSourceImpl implements RemoteDatasource {
 
   @override
   Future<LoginResponse> login(LoginBody loginBody) async {
-    final response = await dio.post(
-      "login",
+    final response = await Dio().post(
+      "${BASEURL}login",
       data: loginBody.toMap(),
     );
     if (response.statusCode != 200) {
@@ -216,7 +216,7 @@ class RemoteDataSourceImpl implements RemoteDatasource {
     });
     final response = await dio.post('bulkBookUpload', data: formData);
 
-     if (response.statusCode != 200) {
+    if (response.statusCode != 200) {
       throw ServerException();
     } else if (response.data['success'] == true) {
       log(response.data.toString());
@@ -224,8 +224,103 @@ class RemoteDataSourceImpl implements RemoteDatasource {
     } else {
       throw ServerExceptionWithMessage<List<BookRowResponse>>(
         response.data['message'],
-        data: List<BookRowResponse>.from(response.data['data']?.map((x) => BookRowResponse.fromMap(x))),
+        data: List<BookRowResponse>.from(
+            response.data['data']?.map((x) => BookRowResponse.fromMap(x))),
       );
+    }
+  }
+
+  @override
+  Future<IssuedBookResponse> getIssuedBookDetails(
+      String email, String bookId) async {
+    final response = await dio.get('getIssuedBook/$bookId/$email');
+
+    if (response.statusCode != 200) {
+      throw ServerException();
+    } else if (response.data['success']) {
+      return IssuedBookResponse.fromMap(response.data);
+    } else {
+      throw ServerExceptionWithMessage(response.data['message']);
+    }
+  }
+
+  @override
+  Future<FineDetailResponse> getFineDetails(String email) async {
+    final response = await dio.get('getFineDetails/$email');
+
+    if (response.statusCode != 200) {
+      throw ServerException();
+    } else if (response.data['success']) {
+      return FineDetailResponse.fromMap(response.data);
+    } else {
+      throw ServerExceptionWithMessage(response.data['message']);
+    }
+  }
+
+  @override
+  Future<DashboardResponse> getStudentDashboardDetails() async {
+    final response = await dio.get('appStudentDetails');
+
+    if (response.statusCode != 200) {
+      throw ServerException();
+    } else if (response.data['success']) {
+      return StudentDashboardResponse.fromMap(response.data);
+    } else {
+      throw ServerExceptionWithMessage(response.data['message']);
+    }
+  }
+
+  @override
+  Future<CommonResponse> issueBook(String bookId) async {
+    final response = await dio.post(
+      'appIssueBook',
+      data: {'book_id': bookId},
+    );
+
+    if (response.statusCode != 200) {
+      throw ServerException();
+    } else if (response.data['success']) {
+      return CommonResponse.fromMap(response.data);
+    } else {
+      throw ServerExceptionWithMessage(response.data['message']);
+    }
+  }
+
+  @override
+  Future<CommonResponse> returnBook(Map<String, dynamic> body) async {
+    final response = await dio.post('appReturnBook', data: body);
+    if (response.statusCode != 200) {
+      throw ServerException();
+    } else if (response.data['success']) {
+      return CommonResponse.fromMap(response.data);
+    } else {
+      throw ServerExceptionWithMessage(response.data['message']);
+    }
+  }
+
+  @override
+  Future<CommonResponse> payFine(Map<String, dynamic> body) async {
+    final response = await dio.post('payFine', data: body);
+
+    if (response.statusCode != 200) {
+      throw ServerException();
+    } else if (response.data['success']) {
+      return CommonResponse.fromMap(response.data);
+    } else {
+      throw ServerExceptionWithMessage(response.data['message']);
+    }
+  }
+
+  @override
+  Future<FineHistoryResponse> getFineHistory(String email) async {
+    final response = await dio.get('getFineHistory/$email');
+
+    if (response.statusCode != 200) {
+      throw ServerException();
+    } else if (response.data['success']) {
+      return FineHistoryResponse.fromMap(response.data);
+    } else {
+      throw ServerExceptionWithMessage(response.data['message']);
     }
   }
 }
@@ -255,4 +350,14 @@ abstract class RemoteDatasource {
   Future<CommonResponse> updateBook(BookModel book);
   Future<BulkBookUploadResponse> uploadBooksInBulk(
       String filePath, String fileName);
+
+  Future<IssuedBookResponse> getIssuedBookDetails(String email, String bookId);
+  Future<CommonResponse> returnBook(Map<String, dynamic> body);
+  Future<FineDetailResponse> getFineDetails(String email);
+  Future<CommonResponse> payFine(Map<String, dynamic> body);
+  Future<FineHistoryResponse> getFineHistory(String email);
+
+  // student
+  Future<DashboardResponse> getStudentDashboardDetails();
+  Future<CommonResponse> issueBook(String bookId);
 }

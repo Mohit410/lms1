@@ -14,9 +14,11 @@ part 'dashboard_state.dart';
 class DashboardBloc extends Bloc<DashboardEvent, DashboardState> {
   final GetAdminDashboard _getAdminDashboard;
   final GetLibrarianDashBoard _getLibrarianDashBoard;
+  final GetStudentDashboard _getStudentDashboard;
   DashboardBloc(
     this._getAdminDashboard,
     this._getLibrarianDashBoard,
+    this._getStudentDashboard,
   ) : super(DashboardEmpty()) {
     on<FetchDashboardData>((event, emit) async {
       emit(DashboardLoading());
@@ -26,7 +28,7 @@ class DashboardBloc extends Bloc<DashboardEvent, DashboardState> {
       } else if (UserPreferences.userRole == Role.librarian.name) {
         result = await _getLibrarianDashBoard(NoParams());
       } else if (UserPreferences.userRole == Role.student.name) {
-        //result = await _getAdminDashboard(NoParams());
+        result = await _getStudentDashboard(NoParams());
       }
       result.fold((failure) {
         if (failure is ServerFailureWithMessage) {
@@ -37,6 +39,14 @@ class DashboardBloc extends Bloc<DashboardEvent, DashboardState> {
       }, (response) {
         emit(DashboardLoaded(dashboardData: response));
       });
+    });
+
+    on<LogOutClicked>((event, emit) async {
+      emit(LogoutLoading());
+
+      await UserPreferences.clearPreferences();
+
+      emit(LogoutSuccess());
     });
   }
 }

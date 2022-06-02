@@ -7,6 +7,8 @@ import 'package:lms1/presentation/components/widgets/loading_widget.dart';
 import 'package:lms1/presentation/screens/dashboard/dashboard.dart';
 import 'package:lms1/presentation/screens/dashboard/view/components/dashboard_card.dart';
 import 'package:lms1/presentation/screens/dashboard/view/components/dashboard_data_tables.dart';
+import 'package:lms1/presentation/screens/profile/profile.dart';
+import 'package:restart_app/restart_app.dart';
 
 class DashboardPage extends StatefulWidget {
   const DashboardPage({Key? key}) : super(key: key);
@@ -17,7 +19,14 @@ class DashboardPage extends StatefulWidget {
 
 class _DashboardPageState extends State<DashboardPage> {
   late DashboardBloc _bloc;
+  late UserModel _user;
   int _isSelectedLibrarian = 0;
+  late FineHistoryTable _fineHistoryTable;
+  late IssuedBooksTable _issuedBooksTable;
+  late TransactionsTable _transactionsTable;
+  late StudentDashboardResponse _studentDashbaordResponse;
+  late AdminDashboardResponse _adminDashboardResponse;
+  late LibrarianDashboardResponse _librarianDashboardResponse;
 
   @override
   void initState() {
@@ -41,19 +50,39 @@ class _DashboardPageState extends State<DashboardPage> {
             style: GoogleFonts.pacifico(),
           ),
         ),
+        actions: [
+          IconButton(
+            onPressed: () async {
+              _bloc.add(LogOutClicked());
+            },
+            icon: const Icon(Icons.logout),
+          ),
+        ],
+        leading: IconButton(
+          onPressed: () {
+            Navigator.of(context).push(ProfilePage.route(_user));
+          },
+          icon: const Icon(
+            Icons.person_outline,
+            size: 28,
+          ),
+        ),
         automaticallyImplyLeading: false,
         elevation: 1,
         foregroundColor: AppBarColors.foregroundColor.color,
         backgroundColor: AppBarColors.backgroundColor.color,
       ),
-      body: buildBody(context),
-      //buildBody(context),
+      body: _buildBody(context),
     );
   }
 
-  buildBody(BuildContext context) {
+  _buildBody(BuildContext context) {
     return BlocConsumer<DashboardBloc, DashboardState>(
-      listener: (context, state) {},
+      listener: (context, state) {
+        if (state is LogoutSuccess) {
+          Restart.restartApp();
+        }
+      },
       builder: (context, state) {
         return RefreshIndicator(
             child: getRefreshIndicatorChild(state),
@@ -71,24 +100,137 @@ class _DashboardPageState extends State<DashboardPage> {
       return const Center(child: Text('Nothing to show'));
     } else if (state is DashboardLoaded) {
       if (state.dashboardData is AdminDashboardResponse) {
+        _adminDashboardResponse = state.dashboardData as AdminDashboardResponse;
+        _user = _adminDashboardResponse.adminData;
         return Padding(
           padding: const EdgeInsets.all(16.0),
-          child: _adminCardsGridView(
-              state.dashboardData as AdminDashboardResponse),
+          child: Column(
+            children: [
+              Align(
+                alignment: Alignment.topLeft,
+                child: RichText(
+                  text: TextSpan(
+                    text: 'Hi!  ',
+                    style: DefaultTextStyle.of(context)
+                        .style
+                        .copyWith(fontSize: 16, fontWeight: FontWeight.w500),
+                    children: [
+                      TextSpan(
+                        text: _adminDashboardResponse.adminData.name,
+                        style: GoogleFonts.lato(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 20,
+                            color: Colors.blueAccent),
+                      ),
+                      TextSpan(
+                          text:
+                              " (${_adminDashboardResponse.adminData.role.capitalize()})",
+                          style: GoogleFonts.ubuntu(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w500,
+                              color: Colors.grey)),
+                    ],
+                  ),
+                ),
+              ),
+              const SizedBox(height: 20),
+              _adminCardsGridView(_adminDashboardResponse),
+            ],
+          ),
         );
       } else if (state.dashboardData is LibrarianDashboardResponse) {
+        _librarianDashboardResponse =
+            state.dashboardData as LibrarianDashboardResponse;
+        _user = _librarianDashboardResponse.librarianData;
         return Padding(
           padding: const EdgeInsets.all(16.0),
           child: SingleChildScrollView(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                _librarianCardsGridView(
-                    state.dashboardData as LibrarianDashboardResponse),
+                Align(
+                  alignment: Alignment.topLeft,
+                  child: RichText(
+                    text: TextSpan(
+                      text: 'Hi!  ',
+                      style: DefaultTextStyle.of(context)
+                          .style
+                          .copyWith(fontSize: 16, fontWeight: FontWeight.w500),
+                      children: [
+                        TextSpan(
+                          text: _librarianDashboardResponse.librarianData.name,
+                          style: GoogleFonts.lato(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 20,
+                              color: Colors.blueAccent),
+                        ),
+                        TextSpan(
+                            text:
+                                " (${_librarianDashboardResponse.librarianData.role.capitalize()})",
+                            style: GoogleFonts.ubuntu(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w500,
+                                color: Colors.grey)),
+                      ],
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 20),
+                _librarianCardsGridView(_librarianDashboardResponse),
                 const SizedBox(height: 30),
                 _getChoiceChipsForLibrarian(),
                 const SizedBox(height: 10),
-                _getList(state.dashboardData as LibrarianDashboardResponse),
+                _getList(_librarianDashboardResponse),
+              ],
+            ),
+          ),
+        );
+      } else if (state.dashboardData is StudentDashboardResponse) {
+        _studentDashbaordResponse =
+            state.dashboardData as StudentDashboardResponse;
+        _user = _studentDashbaordResponse.studentData;
+        _fineHistoryTable =
+            FineHistoryTable(_studentDashbaordResponse.fineHistory);
+        _issuedBooksTable =
+            IssuedBooksTable(_studentDashbaordResponse.issuedBooks);
+        _transactionsTable =
+            TransactionsTable(_studentDashbaordResponse.transactions);
+        return Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                RichText(
+                  text: TextSpan(
+                    text: 'Hi,  ',
+                    style: DefaultTextStyle.of(context)
+                        .style
+                        .copyWith(fontSize: 16, fontWeight: FontWeight.w500),
+                    children: [
+                      TextSpan(
+                          text: _studentDashbaordResponse.studentData.name,
+                          style: GoogleFonts.lato(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 20,
+                              color: Colors.blueAccent)),
+                      TextSpan(
+                          text:
+                              " (${_studentDashbaordResponse.studentData.role.capitalize()})",
+                          style: GoogleFonts.ubuntu(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w500,
+                              color: Colors.grey)),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 20),
+                _getIssuedBookList(),
+                const SizedBox(height: 30),
+                _getTransactionsList(),
+                const SizedBox(height: 30),
+                _getFineHistory(),
               ],
             ),
           ),
@@ -99,7 +241,9 @@ class _DashboardPageState extends State<DashboardPage> {
         child: Text(state.message),
       );
     }
-    return const Text('data');
+    return const Center(
+      child: CircularProgressIndicator(),
+    );
   }
 
   GridView _adminCardsGridView(AdminDashboardResponse dashboardData) {
@@ -172,7 +316,67 @@ class _DashboardPageState extends State<DashboardPage> {
     );
   }
 
+  _getIssuedBookList() => PaginatedDataTable(
+        columns: const [
+          DataColumn(label: Text("Book Name")),
+          DataColumn(label: Text("Author")),
+          DataColumn(label: Text("Publisher")),
+          DataColumn(label: Text("Category")),
+          DataColumn(label: Text("Issue Date")),
+          DataColumn(label: Text("Return Date")),
+          DataColumn(label: Text("Fine")),
+        ],
+        header: const Text('Issued Books'),
+        source: _issuedBooksTable,
+        horizontalMargin: 10,
+        rowsPerPage: _issuedBooksTable.books.isNotEmpty
+            ? _issuedBooksTable.books.length > 5
+                ? 5
+                : _issuedBooksTable.books.length
+            : 1,
+        showCheckboxColumn: false,
+      );
+
+  _getTransactionsList() => PaginatedDataTable(
+        columns: const [
+          DataColumn(label: Text("Amount")),
+          DataColumn(label: Text("Date")),
+          DataColumn(label: Text("Purpose")),
+        ],
+        header: const Text('Transactions'),
+        source: _transactionsTable,
+        horizontalMargin: 10,
+        rowsPerPage: _transactionsTable.transactions.isNotEmpty
+            ? _transactionsTable.transactions.length > 5
+                ? 5
+                : _transactionsTable.transactions.length
+            : 1,
+        showCheckboxColumn: false,
+      );
+
+  _getFineHistory() => PaginatedDataTable(
+        columns: const [
+          DataColumn(label: Text("Book Id")),
+          DataColumn(label: Text("Actual Return Date")),
+          DataColumn(label: Text("User Return date")),
+          DataColumn(label: Text("Fine")),
+        ],
+        header: const Text('Fine History'),
+        source: _fineHistoryTable,
+        horizontalMargin: 10,
+        rowsPerPage: _fineHistoryTable.fineHistory.isNotEmpty
+            ? _fineHistoryTable.fineHistory.length > 5
+                ? 5
+                : _fineHistoryTable.fineHistory.length
+            : 1,
+        showCheckboxColumn: false,
+      );
+
   _getList(LibrarianDashboardResponse librarianData) {
+    final unavailableBooksTable =
+        UnavailableBooksTable(librarianData.unavailableBooks);
+    final overdueFineBooksTable =
+        OverdueFineBooksTable(librarianData.studentsHeavyFine);
     return (_isSelectedLibrarian == 0)
         ? PaginatedDataTable(
             columns: const [
@@ -180,10 +384,14 @@ class _DashboardPageState extends State<DashboardPage> {
               DataColumn(label: Text("Book Name")),
             ],
             header: const Text('Unavailable Books'),
-            source: UnavailableBooksTable(librarianData.unavailableBooks),
+            source: unavailableBooksTable,
             horizontalMargin: 10,
             columnSpacing: 120,
-            rowsPerPage: 5,
+            rowsPerPage: unavailableBooksTable.bookList.isNotEmpty
+                ? unavailableBooksTable.bookList.length > 5
+                    ? 5
+                    : unavailableBooksTable.bookList.length
+                : PaginatedDataTable.defaultRowsPerPage,
             showCheckboxColumn: false,
           )
         : PaginatedDataTable(
@@ -198,9 +406,13 @@ class _DashboardPageState extends State<DashboardPage> {
             arrowHeadColor: Colors.teal,
             sortColumnIndex: 1,
             header: const Text('Overdue Fines'),
-            source: OverdueFineBooksTable(librarianData.studentsHeavyFine),
+            source: overdueFineBooksTable,
             horizontalMargin: 10,
-            rowsPerPage: 5,
+            rowsPerPage: overdueFineBooksTable.fineList.isNotEmpty
+                ? overdueFineBooksTable.fineList.length > 5
+                    ? 5
+                    : overdueFineBooksTable.fineList.length
+                : PaginatedDataTable.defaultRowsPerPage,
             showCheckboxColumn: false,
           );
   }

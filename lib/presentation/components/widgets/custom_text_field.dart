@@ -46,6 +46,7 @@ class CustomTextField extends StatelessWidget {
       autovalidateMode: autovalidateMode,
       validator: (value) => validator(value),
       textInputAction: TextInputAction.next,
+      inputFormatters: inputFormators,
       maxLength: maxLength,
       readOnly: readOnly ?? false,
       decoration: InputDecoration(

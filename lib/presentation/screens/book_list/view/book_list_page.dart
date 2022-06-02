@@ -4,11 +4,13 @@ import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lms1/core/utils/utils.dart';
 import 'package:lms1/data/models/models.dart';
+import 'package:lms1/presentation/components/utils/helper.dart';
 import 'package:lms1/presentation/components/widgets/widgets.dart';
 import 'package:lms1/presentation/screens/add_new_book/add_new_book.dart';
 import 'package:lms1/presentation/screens/book_details/book_details.dart';
 import 'package:lms1/presentation/screens/book_list/book_list.dart';
 import 'package:lms1/presentation/screens/book_list/view/components/book_list_table.dart';
+import 'package:lms1/presentation/screens/dashboard/dashboard.dart';
 
 class BookListPage extends StatefulWidget {
   const BookListPage({Key? key}) : super(key: key);
@@ -51,9 +53,19 @@ class _BookListPageState extends State<BookListPage> {
     );
   }
 
-  buildBody(BuildContext context) {
+  buildBody(BuildContext buildContext) {
     return BlocConsumer<BookListBloc, BookListState>(
-      listener: (context, state) {},
+      listener: (context, state) {
+        if (state is IssueBookSuccess) {
+          showSnackbar(state.message, buildContext);
+          _bloc.add(FetchBooks());
+          BlocProvider.of<DashboardBloc>(buildContext)
+              .add(FetchDashboardData());
+        }
+        if (state is IssueBookFailed) {
+          showSnackbar(state.message, buildContext);
+        }
+      },
       builder: (context, state) {
         return RefreshIndicator(
           onRefresh: () async {
@@ -79,34 +91,14 @@ class _BookListPageState extends State<BookListPage> {
           return Slidable(
             endActionPane: ActionPane(
               motion: const ScrollMotion(),
-              children: [
-                SlidableAction(
-                  onPressed: (context) async {
-                    await Navigator.of(context)
-                        .push(BookDetailsPage.route(state.books[index].bookId));
-                    //.then((value) => _bloc.add(FetchBooks()));
-                  },
-                  backgroundColor: Colors.blue,
-                  foregroundColor: Colors.white,
-                  icon: Icons.view_agenda,
-                  label: 'Details',
-                ),
-                (UserPreferences.userRole == Role.librarian.name)
-                    ? SlidableAction(
-                        onPressed: (context) async {
-                          await Navigator.push(
-                                  context,
-                                  AddNewBookPage.route(
-                                      state.books[index], PageMode.edit))
-                              .then((value) => _bloc.add(FetchBooks()));
-                        },
-                        backgroundColor: Colors.red,
-                        foregroundColor: Colors.white,
-                        icon: Icons.edit,
-                        label: 'Edit',
-                      )
-                    : Container(),
-              ],
+              children: (UserPreferences.userRole == Role.admin.name)
+                  ? [_showDetailsSlidable(state.books[index].bookId)]
+                  : (UserPreferences.userRole == Role.librarian.name)
+                      ? [
+                          _showDetailsSlidable(state.books[index].bookId),
+                          _editSlidable(state.books[index])
+                        ]
+                      : [_issueSlidable(state.books[index].bookId)],
             ),
             child: _getListTile(state.books[index]),
           );
@@ -124,6 +116,39 @@ class _BookListPageState extends State<BookListPage> {
       return Container();
     }
   }
+
+  _showDetailsSlidable(String bookId) => SlidableAction(
+        onPressed: (context) async {
+          await Navigator.of(context).push(BookDetailsPage.route(bookId));
+          //.then((value) => _bloc.add(FetchBooks()));
+        },
+        backgroundColor: Colors.blue,
+        foregroundColor: Colors.white,
+        icon: Icons.view_agenda,
+        label: 'Details',
+      );
+
+  _editSlidable(BookModel book) => SlidableAction(
+        onPressed: (context) async {
+          await Navigator.push(
+                  context, AddNewBookPage.route(book, PageMode.edit))
+              .then((value) => _bloc.add(FetchBooks()));
+        },
+        backgroundColor: Colors.red,
+        foregroundColor: Colors.white,
+        icon: Icons.edit,
+        label: 'Edit',
+      );
+
+  _issueSlidable(String bookId) => SlidableAction(
+        onPressed: (context) async {
+          _bloc.add(IssueBook(bookId));
+        },
+        backgroundColor: Colors.blue,
+        foregroundColor: Colors.white,
+        icon: Icons.book,
+        label: 'Issue Book',
+      );
 
   _getListTile(BookModel book) => ListTile(
         isThreeLine: true,

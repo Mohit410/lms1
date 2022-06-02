@@ -9,3 +9,4 @@ abstract class DashboardEvent extends Equatable {
 
 class FetchDashboardData extends DashboardEvent {}
 
+class LogOutClicked extends DashboardEvent {}

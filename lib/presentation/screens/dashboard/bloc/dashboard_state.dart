@@ -26,3 +26,7 @@ class DashboardFailed extends DashboardState {
 class DashboardEmpty extends DashboardState {}
 
 class DashboardLoading extends DashboardState {}
+
+class LogoutLoading extends DashboardState {}
+
+class LogoutSuccess extends DashboardState {}

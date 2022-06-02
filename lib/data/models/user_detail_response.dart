@@ -70,6 +70,7 @@ class IssuedBookModel extends Equatable {
   final String category;
   final String issueDate;
   final String returnDate;
+  final String bookId;
   final int fine;
   const IssuedBookModel({
     required this.id,
@@ -80,6 +81,7 @@ class IssuedBookModel extends Equatable {
     required this.issueDate,
     required this.returnDate,
     required this.fine,
+    required this.bookId,
   });
 
   Map<String, dynamic> toMap() {
@@ -93,6 +95,7 @@ class IssuedBookModel extends Equatable {
     result.addAll({'issue_date': issueDate});
     result.addAll({'return_date': returnDate});
     result.addAll({'fine': fine});
+    result.addAll({'book_id': bookId});
 
     return result;
   }
@@ -107,6 +110,7 @@ class IssuedBookModel extends Equatable {
       issueDate: map['issue_date'] ?? '',
       returnDate: map['return_date'] ?? '',
       fine: map['fine']?.toInt() ?? 0,
+      bookId: map['book_id'] ?? '',
     );
   }
 
@@ -237,7 +241,7 @@ class FineHistoryModel extends Equatable {
 
   @override
   String toString() {
-    return 'FineHistoryModel(id: $id, issuedBy: $issuedBy, bookId: $bookId, issueDate: $issueDate, actualReturnDate: $actualReturnDate, userReturnDate: $userReturnDate, fine: $fine, v: $v)';
+    return "Book Id: $bookId, Fine: Rs. $fine";
   }
 
   @override

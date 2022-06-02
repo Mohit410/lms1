@@ -78,7 +78,13 @@ class _UpdatePasswordPageState extends State<UpdatePasswordPage> {
       listener: (context, state) {
         if (state is PasswordUpdateSucsess) {
           showSnackbar(state.message, buildContext);
-          Navigator.of(buildContext).pop();
+          if (Navigator.of(buildContext).canPop()) {
+            Navigator.pop(buildContext);
+          } else {
+            oldPasswordController.clear();
+            newPasswordController.clear();
+            confirmPasswordController.clear();
+          }
         }
         if (state is PasswordUpdateFailed) {
           showSnackbar(state.message, buildContext);

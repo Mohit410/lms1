@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:lms1/core/utils/utils.dart';
-import 'package:lms1/injection_container.dart';
 import 'package:lms1/presentation/components/utils/helper.dart';
 import 'package:lms1/presentation/screens/add_new_book/add_new_book.dart';
 import 'package:lms1/presentation/screens/book_list/book_list.dart';
@@ -16,13 +15,6 @@ class HomePage extends StatefulWidget {
   @override
   State<HomePage> createState() => _HomePageState();
 }
-
-const TextStyle textStyle = TextStyle(
-  fontSize: 40,
-  fontWeight: FontWeight.bold,
-  letterSpacing: 2,
-  fontStyle: FontStyle.italic,
-);
 
 class _HomePageState extends State<HomePage> {
   final _scaffoldKey = GlobalKey<ScaffoldState>();
@@ -76,7 +68,7 @@ class _HomePageState extends State<HomePage> {
         bottomNavigationBar: NavigationBar(
           labelBehavior: NavigationDestinationLabelBehavior.onlyShowSelected,
           height: 70,
-          animationDuration: const Duration(seconds: 1),
+          animationDuration: const Duration(milliseconds: 500),
           selectedIndex: _currentIndex,
           onDestinationSelected: (index) {
             setState(() {
@@ -85,12 +77,12 @@ class _HomePageState extends State<HomePage> {
           },
           destinations: _getDestinations(),
         ),
-        body: buildBody(context),
+        body: _buildBody(context),
       ),
     );
   }
 
-  buildBody(BuildContext buildContext) {
+  _buildBody(BuildContext buildContext) {
     return BlocConsumer<NavigationBloc, NavigationState>(
       listener: (context, state) {
         if (state is Uploading) {
@@ -116,10 +108,7 @@ class _HomePageState extends State<HomePage> {
         }
       },
       builder: (context, state) {
-        return IndexedStack(
-          index: _currentIndex,
-          children: _getPages(),
-        );
+        return _getPages()[_currentIndex];
       },
     );
   }
@@ -177,7 +166,8 @@ class _HomePageState extends State<HomePage> {
                       )
                           .then((value) {
                         if (value == 'refresh') {
-                          BlocProvider.of<BookListBloc>(context).add(FetchBooks());
+                          BlocProvider.of<BookListBloc>(context)
+                              .add(FetchBooks());
                         }
                       });
                     }),

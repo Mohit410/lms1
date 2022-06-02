@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+//import 'package:chucker_flutter/chucker_flutter.dart';
 import 'package:dio/dio.dart';
 import 'package:lms1/core/utils/constants.dart';
 import 'package:lms1/core/utils/user_preferences.dart';
@@ -21,7 +22,8 @@ class HttpClient {
     );
     dio.options = options;
     dio.interceptors.add(AppInterceptor());
-    dio.interceptors.add(LogInterceptor());
+    //dio.interceptors.add(LogInterceptor());
+    //dio.interceptors.add(ChuckerDioInterceptor());
   }
 }
 
@@ -31,12 +33,12 @@ class AppInterceptor extends InterceptorsWrapper {
     log(options.baseUrl + options.path);
     final accessToken = UserPreferences.userToken;
     if (accessToken == null) {
+      Restart.restartApp();
       return super.onRequest(options, handler);
     }
     options.headers.addAll({
       "Content-Type": "application/json; charset=UTF-8",
       "Authorization": "Bearer $accessToken",
-      //"Access": "application/json",
     });
     return super.onRequest(options, handler);
   }
@@ -49,8 +51,8 @@ class AppInterceptor extends InterceptorsWrapper {
       if (message == 'Something is missing' ||
           message == 'Do Not Have the Proper Access' ||
           message == 'Not have the token') {
-        log(message);
-        //Restart.restartApp();
+        log("Error: $message");
+        Restart.restartApp();
       }
     }
     return super.onResponse(response, handler);
