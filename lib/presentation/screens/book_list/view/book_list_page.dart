@@ -9,7 +9,7 @@ import 'package:lms1/presentation/components/widgets/widgets.dart';
 import 'package:lms1/presentation/screens/add_new_book/add_new_book.dart';
 import 'package:lms1/presentation/screens/book_details/book_details.dart';
 import 'package:lms1/presentation/screens/book_list/book_list.dart';
-import 'package:lms1/presentation/screens/book_list/view/components/book_list_table.dart';
+import 'package:lms1/presentation/screens/book_list/view/components/book_search_delegate.dart';
 import 'package:lms1/presentation/screens/dashboard/dashboard.dart';
 
 class BookListPage extends StatefulWidget {
@@ -36,74 +36,64 @@ class _BookListPageState extends State<BookListPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Center(
-          child: Text(
-            'Books',
-            style: GoogleFonts.pacifico(),
-          ),
-        ),
-        automaticallyImplyLeading: false,
-        elevation: 1,
-        foregroundColor: AppBarColors.foregroundColor.color,
-        backgroundColor: AppBarColors.backgroundColor.color,
-      ),
-      body: buildBody(context),
-    );
-  }
-
-  buildBody(BuildContext buildContext) {
     return BlocConsumer<BookListBloc, BookListState>(
       listener: (context, state) {
         if (state is IssueBookSuccess) {
-          showSnackbar(state.message, buildContext);
+          showSnackbar(state.message, context);
           _bloc.add(FetchBooks());
-          BlocProvider.of<DashboardBloc>(buildContext)
-              .add(FetchDashboardData());
+          BlocProvider.of<DashboardBloc>(context).add(FetchDashboardData());
         }
         if (state is IssueBookFailed) {
-          showSnackbar(state.message, buildContext);
+          showSnackbar(state.message, context);
         }
       },
       builder: (context, state) {
-        return RefreshIndicator(
-          onRefresh: () async {
-            _bloc.add(FetchBooks());
-          },
-          child: showListDataList(state),
+        if (state is Loading) {
+          return const Center(child: LoadingWidget());
+        }
+        return Scaffold(
+          appBar: AppBar(
+            title: Center(
+              child: Text(
+                'Books',
+                style: GoogleFonts.pacifico(),
+              ),
+            ),
+            actions: [
+              IconButton(
+                onPressed: () {
+                  state is BooksLoaded
+                      ? showSearch(
+                          context: context,
+                          delegate: BookSearchDelegate(
+                            books: state.books,
+                            showListView: (books) => _showListView(books),
+                          ),
+                        )
+                      : showSnackbar("No books available to search", context);
+                },
+                icon: const Icon(Icons.search),
+              ),
+            ],
+            automaticallyImplyLeading: false,
+            elevation: 1,
+            foregroundColor: AppBarColors.foregroundColor.color,
+            backgroundColor: AppBarColors.backgroundColor.color,
+          ),
+          body: RefreshIndicator(
+            onRefresh: () async {
+              _bloc.add(FetchBooks());
+            },
+            child: _showListDataList(state),
+          ),
         );
       },
     );
   }
 
-  showListDataList(BookListState state) {
-    if (state is Loading) {
-      return const Center(child: LoadingWidget());
-    } else if (state is BooksLoaded) {
-      return ListView.separated(
-        cacheExtent: 10,
-        padding: const EdgeInsets.all(16),
-        itemCount: state.books.length,
-        physics: const AlwaysScrollableScrollPhysics(),
-        separatorBuilder: (context, __) => const Divider(height: 1),
-        itemBuilder: (context, index) {
-          return Slidable(
-            endActionPane: ActionPane(
-              motion: const ScrollMotion(),
-              children: (UserPreferences.userRole == Role.admin.name)
-                  ? [_showDetailsSlidable(state.books[index].bookId)]
-                  : (UserPreferences.userRole == Role.librarian.name)
-                      ? [
-                          _showDetailsSlidable(state.books[index].bookId),
-                          _editSlidable(state.books[index])
-                        ]
-                      : [_issueSlidable(state.books[index].bookId)],
-            ),
-            child: _getListTile(state.books[index]),
-          );
-        },
-      );
+  _showListDataList(BookListState state) {
+    if (state is BooksLoaded) {
+      return _showListView(state.books);
     } else if (state is EmptyBookList) {
       return const Center(
         child: Text('No Books Available'),
@@ -116,6 +106,30 @@ class _BookListPageState extends State<BookListPage> {
       return Container();
     }
   }
+
+  Widget _showListView(List<BookModel> books) => ListView.separated(
+        cacheExtent: 10,
+        padding: const EdgeInsets.all(8),
+        itemCount: books.length,
+        physics: const AlwaysScrollableScrollPhysics(),
+        separatorBuilder: (context, __) => const Divider(height: 1),
+        itemBuilder: (context, index) {
+          return Slidable(
+            endActionPane: ActionPane(
+              motion: const ScrollMotion(),
+              children: (UserPreferences.userRole == Role.admin.name)
+                  ? [_showDetailsSlidable(books[index].bookId)]
+                  : (UserPreferences.userRole == Role.librarian.name)
+                      ? [
+                          _showDetailsSlidable(books[index].bookId),
+                          _editSlidable(books[index])
+                        ]
+                      : [_issueSlidable(books[index].bookId)],
+            ),
+            child: _getListTile(books[index]),
+          );
+        },
+      );
 
   _showDetailsSlidable(String bookId) => SlidableAction(
         onPressed: (context) async {
@@ -173,26 +187,5 @@ class _BookListPageState extends State<BookListPage> {
             ],
           ),
         ]),
-      );
-
-  _getBooksTable(List<BookModel> books) => PaginatedDataTable(
-        columns: const [
-          DataColumn(label: Text('Id')),
-          DataColumn(label: Text('Title')),
-          DataColumn(label: Text('Name')),
-          DataColumn(label: Text('Publisher')),
-          DataColumn(label: Text('Author')),
-          DataColumn(label: Text('Category')),
-          DataColumn(label: Text('Total Copies')),
-          DataColumn(label: Text('Available Copies')),
-          DataColumn(label: Text('Price (Rs.)')),
-          DataColumn(label: Text('Action')),
-        ],
-        source: BookListTable(books),
-        header: const Text('Books'),
-        horizontalMargin: 10,
-        columnSpacing: 16,
-        rowsPerPage: 10,
-        showCheckboxColumn: false,
       );
 }

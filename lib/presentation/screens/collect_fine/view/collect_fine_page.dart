@@ -69,23 +69,22 @@ class _CollectFinePageState extends State<CollectFinePage> {
       builder: (context, state) {
         if (state is CollectFineLoading) {
           return const Center(child: LoadingWidget());
-        } else {
-          return Padding(
-            padding: const EdgeInsets.all(36.0),
-            child: Center(
-              child: Form(
-                  key: _firstFormKey,
-                  child: Column(
-                    children: [
-                      const Spacer(),
-                      _emailField(),
-                      const Spacer(),
-                      _emailSubmitButton(),
-                    ],
-                  )),
-            ),
-          );
         }
+        return Padding(
+          padding: const EdgeInsets.all(36.0),
+          child: Center(
+            child: Form(
+                key: _firstFormKey,
+                child: Column(
+                  children: [
+                    const Spacer(),
+                    _emailField(),
+                    const Spacer(),
+                    _emailSubmitButton(),
+                  ],
+                )),
+          ),
+        );
       },
     );
   }

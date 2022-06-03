@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lms1/core/utils/constants.dart';
 import 'package:lms1/data/models/fine_details_response.dart';
 import 'package:lms1/data/models/user_detail_response.dart';
 import 'package:lms1/presentation/components/utils/helper.dart';
 import 'package:lms1/presentation/components/widgets/widgets.dart';
+import 'package:lms1/presentation/screens/collect_fine/collect_fine.dart';
 
 class CollectFineDialog extends StatefulWidget {
   final FineDataModel fineDataModel;
@@ -20,11 +22,11 @@ class CollectFineDialog extends StatefulWidget {
 
 class _CollectFineDialogState extends State<CollectFineDialog> {
   final _formKey = GlobalKey<FormState>();
-  final List<FineHistoryModel> _selectedBooks = [];
+  List<FineHistoryModel> _selectedBooks = [];
   late TextEditingController _amountController;
   late TextEditingController _purposeController;
   late TextEditingController _emailController;
-  String? _book;
+  late TextEditingController _payingForController;
 
   @override
   void initState() {
@@ -32,6 +34,7 @@ class _CollectFineDialogState extends State<CollectFineDialog> {
     _amountController = TextEditingController(text: '0');
     _purposeController = TextEditingController();
     _emailController = TextEditingController(text: widget.fineDataModel.email);
+    _payingForController = TextEditingController();
   }
 
   @override
@@ -39,6 +42,7 @@ class _CollectFineDialogState extends State<CollectFineDialog> {
     _amountController.dispose();
     _purposeController.dispose();
     _emailController.dispose();
+    _payingForController.dispose();
     super.dispose();
   }
 
@@ -87,7 +91,7 @@ class _CollectFineDialogState extends State<CollectFineDialog> {
                 _purposeField(),
                 const SizedBox(height: 20),
                 _showDropDown(),
-                const SizedBox(height: 150),
+                const SizedBox(height: 170),
                 _collectButton(),
                 const SizedBox(height: 20),
               ],
@@ -124,6 +128,7 @@ class _CollectFineDialogState extends State<CollectFineDialog> {
             return null;
           }
         },
+        readOnly: true,
         prefixIcon: const Icon(Icons.currency_rupee),
         hintText: 'Enter Amount',
         labelText: 'Amount',
@@ -150,56 +155,39 @@ class _CollectFineDialogState extends State<CollectFineDialog> {
       );
 
   _showMultiSelect(List<FineHistoryModel> books) async {
-    await showDialog(
-        context: context,
-        builder: (_) {
-          return AlertDialog(
-            elevation: 1,
-            title: const Text('Select Books'),
-            content: SizedBox(
-              height: 400,
-              width: MediaQuery.of(context).size.width * .75,
-              child: (widget.fineHistory.isNotEmpty)
-                  ? ListView.builder(
-                      itemCount: widget.fineHistory.length,
-                      itemBuilder: (context, index) {
-                        return CheckboxListTile(
-                          value: _selectedBooks
-                              .contains(widget.fineHistory[index]),
-                          title: Text(widget.fineHistory[index].toString()),
-                          onChanged: (isChecked) => _bookChanged(
-                              widget.fineHistory[index], isChecked!),
-                        );
-                      },
-                    )
-                  : const Center(
-                      child: Text('No Books Available'),
-                    ),
-            ),
-            actions: [
-              TextButton(
-                child: const Text('Cancel'),
-                onPressed: _cancel,
-              ),
-              ElevatedButton(
-                child: const Text('Submit'),
-                onPressed: _submit,
-              ),
-            ],
-          );
-        });
+    final result = await showDialog(
+      context: context,
+      builder: (_) {
+        return MultiSelectFineDialog(
+            fineHistory: books, previouslySelected: _selectedBooks);
+      },
+    );
 
+    if (result != null) {
+      setState(() {
+        _selectedBooks = result;
+        _payingForController.text = _selectedBooks.isNotEmpty
+            ? "${_selectedBooks.length} Books selected"
+            : '';
+        _calculateFine();
+      });
+    }
+  }
+
+  _calculateFine() {
     int sum = 0;
     for (var book in _selectedBooks) {
       sum += book.fine;
     }
-    _amountController.text = sum.toString();
+    setState(() {
+      _amountController.text = sum.toString();
+    });
   }
 
   _showDropDown() => TextField(
+        controller: _payingForController,
         decoration: InputDecoration(
           border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
-          prefixIcon: const Icon(Icons.currency_rupee),
           labelText: "Paying For",
           hintText: "Select Books",
           contentPadding: const EdgeInsets.fromLTRB(20, 15, 20, 15),
@@ -213,19 +201,85 @@ class _CollectFineDialogState extends State<CollectFineDialog> {
   _collectButton() => CustomButton(
         onPressed: () {
           if (_formKey.currentState!.validate()) {
-            //BlocProvider.of<CollectFineBloc>(context).add(CollectFineClicked(_emailController.text, bookId, amount, purpose))
+            BlocProvider.of<CollectFineBloc>(context).add(CollectFineClicked(
+              _emailController.text,
+              _selectedBooks.map((book) => book.bookId).toList(),
+              _amountController.text,
+              _purposeController.text,
+            ));
+            Navigator.pop(context);
           }
         },
         lable: 'Collect',
         color: Theme.of(context).primaryColorLight,
         context: context,
       );
+}
 
-  _bookChanged(FineHistoryModel fineHistory, bool isSelected) {
+class MultiSelectFineDialog extends StatefulWidget {
+  final List<FineHistoryModel> fineHistory;
+  final List<FineHistoryModel> previouslySelected;
+  const MultiSelectFineDialog({
+    Key? key,
+    required this.fineHistory,
+    required this.previouslySelected,
+  }) : super(key: key);
+
+  @override
+  State<MultiSelectFineDialog> createState() => _MultiSelectFineDialogState();
+}
+
+class _MultiSelectFineDialogState extends State<MultiSelectFineDialog> {
+  final List<FineHistoryModel> _selectedBooks = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _selectedBooks.addAll(widget.previouslySelected);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      elevation: 1,
+      title: const Text('Select Books'),
+      content: SizedBox(
+        height: 400,
+        width: MediaQuery.of(context).size.width * .75,
+        child: (widget.fineHistory.isNotEmpty)
+            ? ListView.builder(
+                itemCount: widget.fineHistory.length,
+                itemBuilder: (context, index) {
+                  return CheckboxListTile(
+                    value: _selectedBooks.contains(widget.fineHistory[index]),
+                    title: Text(widget.fineHistory[index].toString()),
+                    onChanged: (isChecked) =>
+                        _bookChanged(widget.fineHistory[index], isChecked!),
+                  );
+                },
+              )
+            : const Center(
+                child: Text('No Books Available'),
+              ),
+      ),
+      actions: [
+        TextButton(
+          child: const Text('Cancel'),
+          onPressed: _cancel,
+        ),
+        ElevatedButton(
+          child: const Text('Submit'),
+          onPressed: _submit,
+        ),
+      ],
+    );
+  }
+
+  _bookChanged(FineHistoryModel fineHistoryModel, bool isSelected) {
     setState(() {
       isSelected
-          ? _selectedBooks.add(fineHistory)
-          : _selectedBooks.remove(fineHistory);
+          ? _selectedBooks.add(fineHistoryModel)
+          : _selectedBooks.remove(fineHistoryModel);
     });
   }
 
@@ -234,6 +288,6 @@ class _CollectFineDialogState extends State<CollectFineDialog> {
   }
 
   void _submit() {
-    Navigator.pop(context);
+    Navigator.pop(context, _selectedBooks);
   }
 }

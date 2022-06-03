@@ -18,7 +18,7 @@ class FetchFineDetails extends CollectFineEvent {
 
 class CollectFineClicked extends CollectFineEvent {
   final String email;
-  final String bookId;
+  final List<String> bookId;
   final String amount;
   final String purpose;
 

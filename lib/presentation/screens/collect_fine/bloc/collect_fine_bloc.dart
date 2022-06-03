@@ -35,7 +35,7 @@ class CollectFineBloc extends Bloc<CollectFineEvent, CollectFineState> {
       final body = {
         "email": event.email,
         "book_id": event.bookId,
-        "amount": event.amount,
+        "amount": int.parse(event.amount),
         "purpose": event.purpose,
       };
       final result = await _getPayFine(body);

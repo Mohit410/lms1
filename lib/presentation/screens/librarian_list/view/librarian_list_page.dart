@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lms1/core/utils/utils.dart';
+import 'package:lms1/data/models/models.dart';
+import 'package:lms1/presentation/components/user_list_search_delegate.dart';
+import 'package:lms1/presentation/components/utils/helper.dart';
 import 'package:lms1/presentation/components/widgets/widgets.dart';
 import 'package:lms1/presentation/screens/librarian_list/librarian_list.dart';
 import 'package:lms1/presentation/screens/user_detail/view/view.dart';
@@ -37,6 +40,29 @@ class _LibrarianListPageState extends State<LibrarianListPage> {
             style: GoogleFonts.pacifico(),
           ),
         ),
+        actions: [
+          BlocBuilder<LibrarianListBloc, LibrarianListState>(
+            builder: (context, state) {
+              return IconButton(
+                onPressed: () {
+                  if (state is LibrariansLoaded) {
+                    showSearch(
+                      context: context,
+                      delegate: UserListSearchDelegate(
+                        users: state.librarians,
+                        showUsersList: (searchResult) =>
+                            _showListView(searchResult),
+                      ),
+                    );
+                  } else {
+                    showSnackbar("No Users Available", context);
+                  }
+                },
+                icon: const Icon(Icons.search),
+              );
+            },
+          ),
+        ],
         automaticallyImplyLeading: false,
         elevation: 1,
         foregroundColor: AppBarColors.foregroundColor.color,
@@ -66,29 +92,7 @@ class _LibrarianListPageState extends State<LibrarianListPage> {
     } else if (state is LibrariansLoaded) {
       return Padding(
         padding: const EdgeInsets.all(8.0),
-        child: ListView.separated(
-          itemCount: state.librarians.length,
-          cacheExtent: 1000,
-          physics: const AlwaysScrollableScrollPhysics(),
-          separatorBuilder: (context, __) => const Divider(height: 1),
-          itemBuilder: (context, index) {
-            return ListTile(
-              title: Text("Name : ${state.librarians[index].name}"),
-              subtitle: Text("Email: ${state.librarians[index].email}"),
-              leading: const Icon(Icons.person),
-              onTap: () {
-                Navigator.of(context)
-                    .push(UserDetailPage.route(
-                  state.librarians[index].email,
-                  state.librarians[index].role,
-                ))
-                    .then((value) {
-                  _bloc.add(FetchLibrarianList());
-                });
-              },
-            );
-          },
-        ),
+        child: _showListView(state.librarians),
       );
     } else if (state is EmptyLibrarians) {
       return const Center(
@@ -102,4 +106,25 @@ class _LibrarianListPageState extends State<LibrarianListPage> {
       return Container();
     }
   }
+
+  _showListView(List<UserModel> users) => ListView.separated(
+        itemCount: users.length,
+        physics: const AlwaysScrollableScrollPhysics(),
+        separatorBuilder: (context, __) => const Divider(height: 1),
+        itemBuilder: (context, index) {
+          return ListTile(
+            title: Text("Name : ${users[index].name}"),
+            subtitle: Text("Email: ${users[index].email}"),
+            leading: const Icon(Icons.person),
+            onTap: () {
+              Navigator.of(context)
+                  .push(UserDetailPage.route(
+                      users[index].email, users[index].role))
+                  .then((value) {
+                _bloc.add(FetchLibrarianList());
+              });
+            },
+          );
+        },
+      );
 }
