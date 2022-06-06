@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:lms1/core/utils/utils.dart';
 import 'package:lms1/presentation/components/utils/helper.dart';
 import 'package:lms1/presentation/components/widgets/widgets.dart';
@@ -40,22 +39,15 @@ class _ReturnBookPageState extends State<ReturnBookPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Center(
-          child: Text(
-            'Return Book',
-            style: GoogleFonts.pacifico(),
-          ),
-        ),
+        title: const Text('Return Book'),
+        centerTitle: true,
         automaticallyImplyLeading: false,
-        elevation: 1,
-        foregroundColor: AppBarColors.foregroundColor.color,
-        backgroundColor: AppBarColors.backgroundColor.color,
       ),
-      body: buildBody(context),
+      body: _buildBody(context),
     );
   }
 
-  buildBody(BuildContext buildContext) {
+  _buildBody(BuildContext buildContext) {
     return BlocConsumer<ReturnBookBloc, ReturnBookState>(
       listener: (context, state) {
         if (state is IssuedBookDetailsLoaded) {
@@ -148,6 +140,7 @@ class _ReturnBookPageState extends State<ReturnBookPage> {
                 _emailController.text, _bookIdController.text));
           }
         },
+        textColor: Colors.white,
         lable: "Submit",
         context: context,
         color: Colors.red,

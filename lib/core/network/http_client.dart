@@ -4,6 +4,7 @@ import 'dart:developer';
 import 'package:dio/dio.dart';
 import 'package:lms1/core/utils/constants.dart';
 import 'package:lms1/core/utils/user_preferences.dart';
+import 'package:lms1/presentation/screens/dashboard/dashboard.dart';
 import 'package:restart_app/restart_app.dart';
 
 class HttpClient {
@@ -22,8 +23,7 @@ class HttpClient {
     );
     dio.options = options;
     dio.interceptors.add(AppInterceptor());
-    //dio.interceptors.add(LogInterceptor());
-    //dio.interceptors.add(ChuckerDioInterceptor());
+    dio.interceptors.add(LogInterceptor());
   }
 }
 
@@ -52,7 +52,7 @@ class AppInterceptor extends InterceptorsWrapper {
           message == 'Do Not Have the Proper Access' ||
           message == 'Not have the token') {
         log("Error: $message");
-        Restart.restartApp();
+        DashboardBloc.logout();
       }
     }
     return super.onResponse(response, handler);

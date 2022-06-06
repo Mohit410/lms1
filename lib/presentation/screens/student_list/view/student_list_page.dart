@@ -37,12 +37,8 @@ class _StudentListPageState extends State<StudentListPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Center(
-          child: Text(
-            'Student',
-            style: GoogleFonts.pacifico(),
-          ),
-        ),
+        title: const Text('Student'),
+        centerTitle: true,
         actions: [
           BlocBuilder<StudentListBloc, StudentListState>(
             builder: (context, state) {
@@ -67,9 +63,6 @@ class _StudentListPageState extends State<StudentListPage> {
           ),
         ],
         automaticallyImplyLeading: false,
-        elevation: 1,
-        foregroundColor: Colors.black87,
-        backgroundColor: Colors.white,
       ),
       body: buildBody(context),
     );

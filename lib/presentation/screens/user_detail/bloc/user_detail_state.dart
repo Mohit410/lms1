@@ -7,18 +7,18 @@ abstract class UserDetailState extends Equatable {
   List<Object> get props => [];
 }
 
-class Empty extends UserDetailState {}
+class UserDetailsEmpty extends UserDetailState {}
 
-class Loading extends UserDetailState {}
+class UserDetailsLoading extends UserDetailState {}
 
-class Loaded extends UserDetailState {
+class UserDetailsLoaded extends UserDetailState {
   final List<IssuedBookModel> issuedBooks;
   final int totalFine;
   final List<TransactionModel> transactions;
   final UserModel user;
   final List<FineHistoryModel> fineHistory;
 
-  const Loaded(
+  const UserDetailsLoaded(
       {required this.issuedBooks,
       required this.totalFine,
       required this.transactions,
@@ -26,8 +26,8 @@ class Loaded extends UserDetailState {
       required this.fineHistory});
 }
 
-class Failed extends UserDetailState {
+class UserDetailsFailed extends UserDetailState {
   final String message;
 
-  const Failed(this.message);
+  const UserDetailsFailed(this.message);
 }

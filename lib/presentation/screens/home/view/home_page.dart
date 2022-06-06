@@ -65,17 +65,22 @@ class _HomePageState extends State<HomePage> {
         key: _scaffoldKey,
         appBar: null,
         floatingActionButton: _getFAB(),
-        bottomNavigationBar: NavigationBar(
-          labelBehavior: NavigationDestinationLabelBehavior.onlyShowSelected,
-          height: 70,
-          animationDuration: const Duration(milliseconds: 500),
-          selectedIndex: _currentIndex,
-          onDestinationSelected: (index) {
+        bottomNavigationBar: BottomNavigationBar(
+          currentIndex: _currentIndex,
+          showUnselectedLabels: true,
+          unselectedLabelStyle: const TextStyle(
+            overflow: TextOverflow.clip,
+          ),
+          selectedLabelStyle: const TextStyle(
+            overflow: TextOverflow.clip,
+          ),
+          type: BottomNavigationBarType.fixed,
+          onTap: (index) {
             setState(() {
               _currentIndex = index;
             });
           },
-          destinations: _getDestinations(),
+          items: _getDestinations(),
         ),
         body: _buildBody(context),
       ),
@@ -186,7 +191,7 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
-  _getDestinations() {
+  List<BottomNavigationBarItem> _getDestinations() {
     if (UserPreferences.userRole == Role.admin.name) {
       return ADMIN_DESTINATIONS;
     } else if (UserPreferences.userRole == Role.librarian.name) {
@@ -194,5 +199,6 @@ class _HomePageState extends State<HomePage> {
     } else if (UserPreferences.userRole == Role.student.name) {
       return STUDENT_DESTINATIONS;
     }
+    return [];
   }
 }

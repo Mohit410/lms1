@@ -33,19 +33,20 @@ initDI() async {
   sl.registerLazySingleton(() => HttpClient(dio: sl()));
   sl.registerLazySingleton(() => pref);
   sl.registerLazySingleton(() => DataConnectionChecker());
-  //sl.registerLazySingleton(() => http.Client());
-
+  sl.registerLazySingleton(() => NetworkInfoImpl(sl()));
   // datasources
   sl.registerLazySingleton<RemoteDatasource>(
       () => RemoteDataSourceImpl(client: sl()));
 
   // repositories
-  sl.registerFactory<BookRepository>(() => BookRepositoryImpl(sl()));
-  sl.registerFactory<UserRepository>(() => UserReposiotryImpl(sl()));
-  sl.registerFactory<LibrarianRepository>(() => LibrarianRepositoryImpl(sl()));
+  sl.registerFactory<BookRepository>(() => BookRepositoryImpl(sl(), sl()));
+  sl.registerFactory<UserRepository>(() => UserReposiotryImpl(sl(), sl()));
+  sl.registerFactory<LibrarianRepository>(
+      () => LibrarianRepositoryImpl(sl(), sl()));
   sl.registerFactory<AuthenticationRepository>(
-      () => AuthenticationRepositoryImpl(sl()));
-  sl.registerFactory<StudentRepository>(() => StudentRepositoryImpl(sl()));
+      () => AuthenticationRepositoryImpl(sl(), sl()));
+  sl.registerFactory<StudentRepository>(
+      () => StudentRepositoryImpl(sl(), sl()));
 
   //  usecases
   sl.registerFactory(() => GetAdminDashboard(sl()));

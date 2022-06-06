@@ -34,13 +34,9 @@ class _BookDetailsPageState extends State<BookDetailsPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(
+        title: const Text(
           'Book Details',
-          style: GoogleFonts.pacifico(),
         ),
-        elevation: 1,
-        foregroundColor: Colors.black87,
-        backgroundColor: Colors.white,
       ),
       body: buildBody(context),
     );

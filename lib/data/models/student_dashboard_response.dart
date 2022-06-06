@@ -9,15 +9,14 @@ class StudentDashboardResponse extends DashboardResponse {
   final String totalFine;
   final List<TransactionModel> transactions;
   final List<FineHistoryModel> fineHistory;
-  final UserModel studentData;
   StudentDashboardResponse({
     required this.success,
     required this.issuedBooks,
     required this.totalFine,
     required this.transactions,
     required this.fineHistory,
-    required this.studentData,
-  });
+    required UserModel user1,
+  }) : super(user1);
 
   Map<String, dynamic> toMap() {
     final result = <String, dynamic>{};
@@ -28,7 +27,7 @@ class StudentDashboardResponse extends DashboardResponse {
     result
         .addAll({'transactions': transactions.map((x) => x.toMap()).toList()});
     result.addAll({'finehistory': fineHistory.map((x) => x.toMap()).toList()});
-    result.addAll({'registration_details': studentData.toMap()});
+    result.addAll({'registration_details': user.toMap()});
 
     return result;
   }
@@ -43,7 +42,7 @@ class StudentDashboardResponse extends DashboardResponse {
           map['transactions']?.map((x) => TransactionModel.fromMap(x))),
       fineHistory: List<FineHistoryModel>.from(
           map['finehistory']?.map((x) => FineHistoryModel.fromMap(x))),
-      studentData: UserModel.fromMap(map['registration_details']),
+      user1: UserModel.fromMap(map['registration_details']),
     );
   }
 
@@ -54,7 +53,7 @@ class StudentDashboardResponse extends DashboardResponse {
 
   @override
   String toString() {
-    return 'StudentDashboardResponse(success: $success, issuedBooks: $issuedBooks, totalFine: $totalFine, transactions: $transactions, fineHistory: $fineHistory, studentData: $studentData)';
+    return 'StudentDashboardResponse(success: $success, issuedBooks: $issuedBooks, totalFine: $totalFine, transactions: $transactions, fineHistory: $fineHistory, studentData: $user)';
   }
 
   @override
@@ -65,7 +64,7 @@ class StudentDashboardResponse extends DashboardResponse {
       totalFine,
       transactions,
       fineHistory,
-      studentData,
+      user,
     ];
   }
 }

@@ -4,27 +4,33 @@ import 'package:equatable/equatable.dart';
 
 import 'package:lms1/data/models/models.dart';
 
-abstract class DashboardResponse extends Equatable {}
+class DashboardResponse extends Equatable {
+  final UserModel user;
+
+  DashboardResponse(this.user);
+  
+  @override
+  List<Object?> get props => [user];
+}
 
 class AdminDashboardResponse extends DashboardResponse {
   final bool success;
-  final UserModel adminData;
   final int totalUsers;
   final int totalBooks;
   final int totalFineCollection;
   AdminDashboardResponse({
     required this.success,
-    required this.adminData,
+    required UserModel user1,
     required this.totalUsers,
     required this.totalBooks,
     required this.totalFineCollection,
-  });
+  }) : super(user1);
 
   Map<String, dynamic> toMap() {
     final result = <String, dynamic>{};
 
     result.addAll({'success': success});
-    result.addAll({'adminData': adminData.toMap()});
+    result.addAll({'adminData': user.toMap()});
     result.addAll({'total_users': totalUsers});
     result.addAll({'total_books': totalBooks});
     result.addAll({'total_fine_collection': totalFineCollection});
@@ -35,7 +41,7 @@ class AdminDashboardResponse extends DashboardResponse {
   factory AdminDashboardResponse.fromMap(Map<String, dynamic> map) {
     return AdminDashboardResponse(
       success: map['success'],
-      adminData: UserModel.fromMap(map['adminData']),
+      user1: UserModel.fromMap(map['adminData']),
       totalUsers: map['total_users'],
       totalBooks: map['total_books'],
       totalFineCollection: map['total_fine_collection'],
@@ -49,30 +55,29 @@ class AdminDashboardResponse extends DashboardResponse {
 
   @override
   String toString() {
-    return 'AdminDashboard(success: $success, adminData: $adminData, totalUsers: $totalUsers, totalBooks: $totalBooks, totalFineCollection: $totalFineCollection)';
+    return 'AdminDashboard(success: $success, adminData: $user, totalUsers: $totalUsers, totalBooks: $totalBooks, totalFineCollection: $totalFineCollection)';
   }
 
   @override
   List<Object> get props {
-    return [success, adminData, totalUsers, totalBooks, totalFineCollection];
+    return [success, user, totalUsers, totalBooks, totalFineCollection];
   }
 }
 
 class LibrarianDashboardResponse extends DashboardResponse {
   final bool success;
-  final UserModel librarianData;
   final int totalBooks;
   final int totalStudents;
   final List<StudentHeavyFineModel> studentsHeavyFine;
   final List<UnavailableBook> unavailableBooks;
   LibrarianDashboardResponse({
     required this.success,
-    required this.librarianData,
+    required UserModel user1,
     required this.totalBooks,
     required this.totalStudents,
     required this.studentsHeavyFine,
     required this.unavailableBooks,
-  });
+  }) : super(user1);
 
   LibrarianDashboardResponse copyWith({
     bool? success,
@@ -84,7 +89,7 @@ class LibrarianDashboardResponse extends DashboardResponse {
   }) {
     return LibrarianDashboardResponse(
       success: success ?? this.success,
-      librarianData: librarianData ?? this.librarianData,
+      user1: librarianData ?? super.user,
       totalBooks: totalBooks ?? this.totalBooks,
       totalStudents: totalStudents ?? this.totalStudents,
       studentsHeavyFine: studentsHeavyFine ?? this.studentsHeavyFine,
@@ -96,7 +101,7 @@ class LibrarianDashboardResponse extends DashboardResponse {
     final result = <String, dynamic>{};
 
     result.addAll({'success': success});
-    result.addAll({'librarianData': librarianData.toMap()});
+    result.addAll({'librarianData': user.toMap()});
     result.addAll({'total_books': totalBooks});
     result.addAll({'total_students': totalStudents});
     result.addAll({
@@ -112,7 +117,7 @@ class LibrarianDashboardResponse extends DashboardResponse {
   factory LibrarianDashboardResponse.fromMap(Map<String, dynamic> map) {
     return LibrarianDashboardResponse(
       success: map['success'] ?? false,
-      librarianData: UserModel.fromMap(map['librarianData']),
+      user1: UserModel.fromMap(map['librarianData']),
       totalBooks: map['total_books']?.toInt() ?? 0,
       totalStudents: map['total_students']?.toInt() ?? 0,
       studentsHeavyFine: List<StudentHeavyFineModel>.from(
@@ -131,14 +136,14 @@ class LibrarianDashboardResponse extends DashboardResponse {
 
   @override
   String toString() {
-    return 'LibrarianDashboardResponse(success: $success, librarianData: $librarianData, totalBooks: $totalBooks, totalStudents: $totalStudents, studentHeavyFine: $studentsHeavyFine, unavailableBooks: $unavailableBooks)';
+    return 'LibrarianDashboardResponse(success: $success, librarianData: $user, totalBooks: $totalBooks, totalStudents: $totalStudents, studentHeavyFine: $studentsHeavyFine, unavailableBooks: $unavailableBooks)';
   }
 
   @override
   List<Object> get props {
     return [
       success,
-      librarianData,
+      user,
       totalBooks,
       totalStudents,
       studentsHeavyFine,

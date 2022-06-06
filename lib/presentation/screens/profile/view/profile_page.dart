@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:lms1/core/utils/utils.dart';
 import 'package:lms1/data/models/models.dart';
 import 'package:lms1/presentation/components/utils/helper.dart';
@@ -15,13 +14,7 @@ class ProfilePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: Text(
-            user.name,
-            style: GoogleFonts.pacifico(),
-          ),
-          foregroundColor: Colors.black87,
-          backgroundColor: Colors.white,
-          elevation: 1,
+          title: Text(user.name),
         ),
         body: Padding(
           padding: const EdgeInsets.fromLTRB(24, 24, 24, 24),

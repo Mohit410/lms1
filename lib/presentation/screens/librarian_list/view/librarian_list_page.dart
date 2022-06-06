@@ -34,12 +34,8 @@ class _LibrarianListPageState extends State<LibrarianListPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Center(
-          child: Text(
-            'Librarians',
-            style: GoogleFonts.pacifico(),
-          ),
-        ),
+        title: const Text('Librarians'),
+        centerTitle: true,
         actions: [
           BlocBuilder<LibrarianListBloc, LibrarianListState>(
             builder: (context, state) {
@@ -64,9 +60,6 @@ class _LibrarianListPageState extends State<LibrarianListPage> {
           ),
         ],
         automaticallyImplyLeading: false,
-        elevation: 1,
-        foregroundColor: AppBarColors.foregroundColor.color,
-        backgroundColor: AppBarColors.backgroundColor.color,
       ),
       body: buildBody(context),
     );

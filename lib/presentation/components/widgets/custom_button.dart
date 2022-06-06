@@ -19,7 +19,34 @@ class CustomButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Material(
+    return ElevatedButton(
+      onPressed: onPressed,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          icon ?? Container(),
+          const SizedBox(width: 10),
+          Text(lable, textAlign: TextAlign.center),
+        ],
+      ),
+      style: ButtonStyle(
+        alignment: Alignment.center,
+        backgroundColor: MaterialStateProperty.all(color),
+        textStyle: MaterialStateProperty.all(
+          TextStyle(
+            color: textColor,
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        padding: MaterialStateProperty.all(
+            const EdgeInsets.fromLTRB(20, 15, 20, 15)),
+        elevation: MaterialStateProperty.all(5.0),
+        foregroundColor: MaterialStateProperty.all(textColor),
+      ),
+    );
+
+    /* return Material(
       elevation: 5,
       color: color,
       borderRadius: BorderRadius.circular(30),
@@ -44,6 +71,6 @@ class CustomButton extends StatelessWidget {
           ],
         ),
       ),
-    );
+    ); */
   }
 }

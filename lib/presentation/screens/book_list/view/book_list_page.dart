@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:lms1/core/utils/utils.dart';
 import 'package:lms1/data/models/models.dart';
 import 'package:lms1/presentation/components/utils/helper.dart';
@@ -10,7 +9,6 @@ import 'package:lms1/presentation/screens/add_new_book/add_new_book.dart';
 import 'package:lms1/presentation/screens/book_details/book_details.dart';
 import 'package:lms1/presentation/screens/book_list/book_list.dart';
 import 'package:lms1/presentation/screens/book_list/view/components/book_search_delegate.dart';
-import 'package:lms1/presentation/screens/dashboard/dashboard.dart';
 
 class BookListPage extends StatefulWidget {
   const BookListPage({Key? key}) : super(key: key);
@@ -40,29 +38,22 @@ class _BookListPageState extends State<BookListPage> {
       listener: (context, state) {
         if (state is IssueBookSuccess) {
           showSnackbar(state.message, context);
-          _bloc.add(FetchBooks());
-          BlocProvider.of<DashboardBloc>(context).add(FetchDashboardData());
+          _refreshList();
         }
         if (state is IssueBookFailed) {
           showSnackbar(state.message, context);
+          _refreshList();
         }
       },
       builder: (context, state) {
-        if (state is Loading) {
-          return const Center(child: LoadingWidget());
-        }
         return Scaffold(
           appBar: AppBar(
-            title: Center(
-              child: Text(
-                'Books',
-                style: GoogleFonts.pacifico(),
-              ),
-            ),
+            title: const Text('Books'),
+            centerTitle: true,
             actions: [
               IconButton(
                 onPressed: () {
-                  state is BooksLoaded
+                  state is BookList
                       ? showSearch(
                           context: context,
                           delegate: BookSearchDelegate(
@@ -72,38 +63,50 @@ class _BookListPageState extends State<BookListPage> {
                         )
                       : showSnackbar("No books available to search", context);
                 },
-                icon: const Icon(Icons.search),
+                icon: const Icon(
+                  Icons.search,
+                ),
               ),
             ],
             automaticallyImplyLeading: false,
-            elevation: 1,
-            foregroundColor: AppBarColors.foregroundColor.color,
-            backgroundColor: AppBarColors.backgroundColor.color,
           ),
-          body: RefreshIndicator(
-            onRefresh: () async {
-              _bloc.add(FetchBooks());
-            },
-            child: _showListDataList(state),
-          ),
+          body: (state is Loading)
+              ? const Center(child: LoadingWidget())
+              : RefreshIndicator(
+                  onRefresh: () async {
+                    _refreshList();
+                  },
+                  child: _showListDataList(state),
+                ),
         );
       },
     );
   }
 
+  _refreshList() => _bloc.add(FetchBooks());
+
   _showListDataList(BookListState state) {
-    if (state is BooksLoaded) {
+    if (state is BookList) {
       return _showListView(state.books);
-    } else if (state is EmptyBookList) {
-      return const Center(
-        child: Text('No Books Available'),
-      );
-    } else if (state is Failed) {
-      return Center(
-        child: Text(state.message),
-      );
     } else {
-      return Container();
+      return Center(
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            state is BookListFailed
+                ? Text(state.message)
+                : state is EmptyBookList
+                    ? const Text('No Books Available')
+                    : Container(),
+            TextButton(
+              onPressed: () {
+                _bloc.add(FetchBooks());
+              },
+              child: const Text("Retry"),
+            )
+          ],
+        ),
+      );
     }
   }
 

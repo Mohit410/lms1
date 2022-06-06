@@ -11,16 +11,16 @@ class EmptyBookList extends BookListState {}
 
 class Loading extends BookListState {}
 
-class BooksLoaded extends BookListState {
+class BookList extends BookListState {
   final List<BookModel> books;
 
-  const BooksLoaded(this.books);
+  const BookList(this.books);
 }
 
-class Failed extends BookListState {
+class BookListFailed extends BookListState {
   final String message;
 
-  const Failed(this.message);
+  const BookListFailed(this.message);
 }
 
 class IssueBookSuccess extends BookListState {

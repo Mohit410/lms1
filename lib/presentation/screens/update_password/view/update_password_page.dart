@@ -5,6 +5,7 @@ import 'package:lms1/core/utils/utils.dart';
 import 'package:lms1/presentation/components/utils/helper.dart';
 
 import 'package:lms1/presentation/components/widgets/widgets.dart';
+import 'package:lms1/presentation/screens/dashboard/dashboard.dart';
 import 'package:lms1/presentation/screens/update_password/update_password.dart';
 
 class UpdatePasswordPage extends StatefulWidget {
@@ -26,64 +27,44 @@ class UpdatePasswordPage extends StatefulWidget {
 class _UpdatePasswordPageState extends State<UpdatePasswordPage> {
   final _formKey = GlobalKey<FormState>();
   late UpdatePasswordBloc _bloc;
-  late TextEditingController oldPasswordController;
-  late TextEditingController newPasswordController;
-  late TextEditingController confirmPasswordController;
+  late TextEditingController _oldPasswordController;
+  late TextEditingController _newPasswordController;
+  late TextEditingController _confirmPasswordController;
 
   @override
   void initState() {
     _bloc = BlocProvider.of<UpdatePasswordBloc>(context);
-    oldPasswordController = TextEditingController();
-    newPasswordController = TextEditingController();
-    confirmPasswordController = TextEditingController();
+    _oldPasswordController = TextEditingController();
+    _newPasswordController = TextEditingController();
+    _confirmPasswordController = TextEditingController();
     super.initState();
   }
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: (UserPreferences.userRole == Role.admin.name)
-          ? AppBar(
-              title: Text(
-                'Update Password',
-                style: GoogleFonts.pacifico(),
-              ),
-              foregroundColor: Colors.black87,
-              backgroundColor: Colors.white,
-              elevation: 1,
-              leading: IconButton(
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-                icon: const Icon(Icons.arrow_back),
-              ),
-            )
-          : AppBar(
-              title: Text(
-                'Update Password',
-                style: GoogleFonts.pacifico(),
-              ),
-              centerTitle: true,
-              foregroundColor: Colors.black87,
-              backgroundColor: Colors.white,
-              elevation: 1,
-              automaticallyImplyLeading: false,
-            ),
-      body: buildBody(context),
-    );
+  void dispose() {
+    _oldPasswordController.dispose();
+    _newPasswordController.dispose();
+    _confirmPasswordController.dispose();
+    super.dispose();
   }
 
-  buildBody(BuildContext buildContext) {
+  @override
+  Widget build(BuildContext buildContext) {
     return BlocConsumer<UpdatePasswordBloc, UpdatePasswordState>(
-      listener: (context, state) {
+      listener: (context, state) async {
         if (state is PasswordUpdateSucsess) {
           showSnackbar(state.message, buildContext);
+          await Future.delayed(const Duration(seconds: 2));
+          if (widget.email == UserPreferences.userEmail) {
+            await DashboardBloc.logout();
+          }
+
           if (Navigator.of(buildContext).canPop()) {
             Navigator.pop(buildContext);
           } else {
-            oldPasswordController.clear();
-            newPasswordController.clear();
-            confirmPasswordController.clear();
+            _oldPasswordController.clear();
+            _newPasswordController.clear();
+            _confirmPasswordController.clear();
           }
         }
         if (state is PasswordUpdateFailed) {
@@ -94,36 +75,57 @@ class _UpdatePasswordPageState extends State<UpdatePasswordPage> {
         if (state is PasswordUpdateLoading) {
           return const Center(child: LoadingWidget());
         }
-        return Center(
-          child: Padding(
-            padding: const EdgeInsets.all(36.0),
-            child: Form(
-              key: _formKey,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  const Spacer(),
-                  oldPasswordField(),
-                  const SizedBox(height: 20),
-                  newPasswordField(),
-                  const SizedBox(height: 20),
-                  confirmPasswordField(),
-                  const SizedBox(height: 40),
-                  const Spacer(),
-                  updateButton(),
-                  const SizedBox(height: 15),
-                ],
-              ),
-            ),
-          ),
+        return Scaffold(
+          appBar: (UserPreferences.userRole == Role.admin.name)
+              ? AppBar(
+                  title: const Text('Update Password'),
+                  leading: IconButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                    icon: const Icon(Icons.arrow_back),
+                  ),
+                )
+              : AppBar(
+                  title: const Text('Update Password'),
+                  centerTitle: true,
+                  automaticallyImplyLeading: false,
+                ),
+          body: _buildBody(context),
         );
       },
     );
   }
 
-  oldPasswordField() => CustomTextField(
-        controller: oldPasswordController,
+  Widget _buildBody(BuildContext buildContext) {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(36.0),
+        child: Form(
+          key: _formKey,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              const Spacer(),
+              _oldPasswordField(),
+              const SizedBox(height: 20),
+              _newPasswordField(),
+              const SizedBox(height: 20),
+              _confirmPasswordField(),
+              const SizedBox(height: 40),
+              const Spacer(),
+              _updateButton(),
+              const SizedBox(height: 15),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  _oldPasswordField() => CustomTextField(
+        controller: _oldPasswordController,
         validator: (value) {
           if (value == null || value.isEmpty) {
             return 'Please enter old password';
@@ -138,8 +140,8 @@ class _UpdatePasswordPageState extends State<UpdatePasswordPage> {
         isObsecureText: true,
       );
 
-  newPasswordField() => CustomTextField(
-        controller: newPasswordController,
+  _newPasswordField() => CustomTextField(
+        controller: _newPasswordController,
         validator: (value) {
           if (value == null || value.isEmpty) {
             return 'Please enter new password';
@@ -153,13 +155,13 @@ class _UpdatePasswordPageState extends State<UpdatePasswordPage> {
         isObsecureText: true,
       );
 
-  confirmPasswordField() => CustomTextField(
-        controller: confirmPasswordController,
+  _confirmPasswordField() => CustomTextField(
+        controller: _confirmPasswordController,
         validator: (value) {
           if (value == null || value.isEmpty) {
             return 'Please confirm new password';
           }
-          if (value != newPasswordController.text) {
+          if (value != _newPasswordController.text) {
             return "Password doesn't match";
           }
         },
@@ -171,15 +173,15 @@ class _UpdatePasswordPageState extends State<UpdatePasswordPage> {
         isObsecureText: false,
       );
 
-  updateButton() => CustomButton(
+  _updateButton() => CustomButton(
         onPressed: () {
           if (_formKey.currentState!.validate()) {
             _bloc.add(UpdatePasswordClicked(
               email: widget.email,
               role: widget.role,
-              oldPassword: oldPasswordController.text,
-              newPassword: newPasswordController.text,
-              confirmPassword: confirmPasswordController.text,
+              oldPassword: _oldPasswordController.text,
+              newPassword: _newPasswordController.text,
+              confirmPassword: _confirmPasswordController.text,
             ));
           }
         },

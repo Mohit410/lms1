@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:lms1/core/network/http_client.dart';
 import 'package:lms1/core/utils/user_preferences.dart';
 import 'package:lms1/presentation/screens/add_new_book/add_new_book.dart';
@@ -55,8 +56,9 @@ class MyApp extends StatelessWidget {
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
-        theme: ThemeData(useMaterial3: true).copyWith(),
+        theme: lightTheme(context),
         title: "Library Management App",
+        darkTheme: darkTheme(context),
         home: Scaffold(
           body: SafeArea(
             child: Center(
@@ -69,4 +71,56 @@ class MyApp extends StatelessWidget {
       ),
     );
   }
+
+  lightTheme(BuildContext context) => ThemeData.light().copyWith(
+        useMaterial3: true,
+        appBarTheme: AppBarTheme(
+          elevation: 1,
+          //backgroundColor: Colors.white,
+          color: Colors.white,
+          iconTheme: const IconThemeData(color: Colors.black54),
+          actionsIconTheme: const IconThemeData(color: Colors.black),
+          titleTextStyle: GoogleFonts.lato(
+            textStyle: Theme.of(context).textTheme.headline5,
+          ),
+          shape: const RoundedRectangleBorder(
+            borderRadius: BorderRadius.vertical(bottom: Radius.circular(30)),
+          ),
+        ),
+        colorScheme: const ColorScheme.light().copyWith(),
+        bottomNavigationBarTheme: const BottomNavigationBarThemeData(
+          backgroundColor: Colors.white,
+          elevation: 10,
+          //unselectedItemColor: Colors.grey[800],
+        ),
+        floatingActionButtonTheme: FloatingActionButtonThemeData(
+          backgroundColor: Colors.indigo.shade500,
+          foregroundColor: Colors.white,
+        ),
+      );
+
+  darkTheme(BuildContext context) => ThemeData.dark().copyWith(
+        useMaterial3: true,
+        appBarTheme: AppBarTheme(
+          elevation: 1,
+          backgroundColor: Colors.indigo,
+          iconTheme: const IconThemeData(color: Colors.white),
+          actionsIconTheme: const IconThemeData(color: Colors.white),
+          titleTextStyle: GoogleFonts.lato(
+            textStyle: Theme.of(context).textTheme.headline5,
+            color: Colors.white,
+          ),
+          shape: const RoundedRectangleBorder(
+            borderRadius: BorderRadius.vertical(
+              bottom: Radius.circular(30),
+            ),
+          ),
+        ),
+        bottomNavigationBarTheme: const BottomNavigationBarThemeData(
+          unselectedItemColor: Colors.white70,
+          selectedItemColor: Colors.greenAccent,
+          backgroundColor: Colors.indigo,
+        ),
+        colorScheme: const ColorScheme.dark().copyWith(),
+      );
 }

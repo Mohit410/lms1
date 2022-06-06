@@ -42,100 +42,112 @@ class _UserDetailPageState extends State<UserDetailPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          'User Details',
-          style: GoogleFonts.pacifico(),
-        ),
-        elevation: 1,
-        foregroundColor: Colors.black87,
-        backgroundColor: Colors.white,
-      ),
-      body: SafeArea(child: buildBody()),
-    );
-  }
-
-  buildBody() {
-    return BlocConsumer<UserDetailBloc, UserDetailState>(
-      listener: (context, state) {},
+    return BlocBuilder<UserDetailBloc, UserDetailState>(
       builder: (context, state) {
-        return RefreshIndicator(
-          onRefresh: () async {
-            _bloc.add(FetchData(email: widget.email, role: widget.role));
-          },
-          child: Center(
-            child: Stack(
-              children: [
-                SingleChildScrollView(
-                  clipBehavior: Clip.antiAlias,
-                  physics: const AlwaysScrollableScrollPhysics(),
-                  padding: const EdgeInsets.fromLTRB(24, 16, 24, 0),
-                  child: refreshIndicatorChild(state),
-                ),
-              ],
+        return Scaffold(
+          appBar: AppBar(
+            title: Text(
+              'User Details',
+              style: GoogleFonts.pacifico(),
             ),
+            elevation: 1,
+            foregroundColor: Colors.black87,
+            backgroundColor: Colors.white,
           ),
+          body: (state is UserDetailsLoading)
+              ? const Center(child: LoadingWidget())
+              : _buildBody(state),
         );
       },
     );
   }
 
-  Widget refreshIndicatorChild(state) {
-    if (state is Loaded) {
-      return Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: [
-          headingText('Name'),
-          const SizedBox(height: 8),
-          fieldText(state.user.name),
-          const SizedBox(height: 16),
-          headingText('Email'),
-          const SizedBox(height: 8),
-          fieldText(state.user.email),
-          const SizedBox(height: 16),
-          headingText('Phone'),
-          const SizedBox(height: 8),
-          fieldText(state.user.phone),
-          const SizedBox(height: 16),
-          headingText('Address'),
-          const SizedBox(height: 8),
-          fieldText(state.user.address),
-          const SizedBox(height: 16),
-          headingText('City'),
-          const SizedBox(height: 8),
-          fieldText(state.user.city),
-          const SizedBox(height: 16),
-          headingText('State'),
-          const SizedBox(height: 8),
-          fieldText(state.user.state),
-          const SizedBox(height: 16),
-          headingText('Pincode'),
-          const SizedBox(height: 8),
-          fieldText(state.user.pincode),
-          (widget.role == Role.student.name)
-              ? issuedBooksList(state.issuedBooks)
-              : Container(),
-          (widget.role == Role.student.name)
-              ? fineHistoryList(state.fineHistory)
-              : Container(),
-          (widget.role == Role.student.name)
-              ? transactionsList(state.transactions)
-              : Container(),
-          const SizedBox(height: 12),
-          const Divider(height: 2),
-          const SizedBox(height: 12),
-          Align(
-            alignment: Alignment.bottomCenter,
-            child: bottomButtons(state.user),
-          ),
-          const SizedBox(height: 24),
+  _buildBody(UserDetailState state) {
+    return RefreshIndicator(
+      onRefresh: () async {
+        _bloc.add(FetchData(email: widget.email, role: widget.role));
+      },
+      child: widget.role == Role.student.name
+          ? SingleChildScrollView(
+              clipBehavior: Clip.antiAlias,
+              physics: const AlwaysScrollableScrollPhysics(),
+              child: _refreshIndicatorChild(state),
+            )
+          : Stack(children: [
+              ListView(),
+              _refreshIndicatorChild(state),
+            ]),
+    );
+  }
+
+  List<Widget> _detailsList(state) {
+    List<Widget> userDetails = [
+      headingText('Name'),
+      const SizedBox(height: 8),
+      fieldText(state.user.name),
+      const SizedBox(height: 16),
+      headingText('Email'),
+      const SizedBox(height: 8),
+      fieldText(state.user.email),
+      const SizedBox(height: 16),
+      headingText('Phone'),
+      const SizedBox(height: 8),
+      fieldText(state.user.phone),
+      const SizedBox(height: 16),
+      headingText('Address'),
+      const SizedBox(height: 8),
+      fieldText(state.user.address),
+      const SizedBox(height: 16),
+      headingText('City'),
+      const SizedBox(height: 8),
+      fieldText(state.user.city),
+      const SizedBox(height: 16),
+      headingText('State'),
+      const SizedBox(height: 8),
+      fieldText(state.user.state),
+      const SizedBox(height: 16),
+      headingText('Pincode'),
+      const SizedBox(height: 8),
+      fieldText(state.user.pincode),
+    ];
+
+    if (widget.role == Role.student.name) {
+      userDetails.addAll(
+        [
+          _issuedBooksList(state.issuedBooks),
+          _fineHistoryList(state.fineHistory),
+          _transactionsList(state.transactions)
         ],
       );
-    } else if (state is Loading) {
-      return const LoadingWidget();
-    } else if (state is Failed) {
+    } else {
+      userDetails.add(const Spacer());
+    }
+
+    userDetails.addAll([
+      const SizedBox(height: 12),
+      const Divider(height: 2),
+      const SizedBox(height: 12),
+      Align(
+        alignment: Alignment.bottomCenter,
+        child: _bottomButtons(state.user),
+      ),
+      const SizedBox(height: 24),
+    ]);
+
+    return userDetails;
+  }
+
+  Widget _refreshIndicatorChild(UserDetailState state) {
+    if (state is UserDetailsLoaded) {
+      return Padding(
+        padding: const EdgeInsets.fromLTRB(24, 16, 24, 0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: _detailsList(state),
+        ),
+      );
+    } else if (state is UserDetailsFailed) {
       return Column(
         children: [
           Center(child: Text(state.message)),
@@ -150,12 +162,12 @@ class _UserDetailPageState extends State<UserDetailPage> {
     }
   }
 
-  bottomButtons(UserModel user) => Row(
+  _bottomButtons(UserModel user) => Row(
         children: [
           Expanded(
             child: ElevatedButton(
               onPressed: () {
-                onEditClicked(user);
+                _onEditClicked(user);
               },
               child: const Text("Edit"),
             ),
@@ -164,7 +176,7 @@ class _UserDetailPageState extends State<UserDetailPage> {
           Expanded(
             child: ElevatedButton(
               onPressed: () {
-                onChangePasswordClicked(user.email, user.role);
+                _onChangePasswordClicked(user.email, user.role);
               },
               child: const Text("Change Password"),
             ),
@@ -172,7 +184,7 @@ class _UserDetailPageState extends State<UserDetailPage> {
         ],
       );
 
-  onEditClicked(UserModel user) {
+  _onEditClicked(UserModel user) {
     Navigator.of(context)
         .push(RegisterPage.route(user, PageMode.edit))
         .then((value) {
@@ -180,11 +192,11 @@ class _UserDetailPageState extends State<UserDetailPage> {
     });
   }
 
-  onChangePasswordClicked(String email, String role) {
+  _onChangePasswordClicked(String email, String role) {
     Navigator.of(context).push(UpdatePasswordPage.route(email, role));
   }
 
-  issuedBooksList(List issuedBooks) => Column(
+  _issuedBooksList(List issuedBooks) => Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const SizedBox(height: 12),
@@ -213,7 +225,7 @@ class _UserDetailPageState extends State<UserDetailPage> {
         ],
       );
 
-  fineHistoryList(List fines) => Column(
+  _fineHistoryList(List fines) => Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const SizedBox(height: 12),
@@ -242,7 +254,7 @@ class _UserDetailPageState extends State<UserDetailPage> {
         ],
       );
 
-  transactionsList(List transactions) => Column(
+  _transactionsList(List transactions) => Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const SizedBox(height: 12),

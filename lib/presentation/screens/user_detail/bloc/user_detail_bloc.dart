@@ -10,20 +10,20 @@ part 'user_detail_state.dart';
 
 class UserDetailBloc extends Bloc<UserDetailEvent, UserDetailState> {
   final GetStudentDetails _getStudentDetails;
-  UserDetailBloc(this._getStudentDetails) : super(Empty()) {
+  UserDetailBloc(this._getStudentDetails) : super(UserDetailsEmpty()) {
     on<FetchData>((event, emit) async {
-      emit(Loading());
+      emit(UserDetailsLoading());
       final result = await _getStudentDetails(event.email);
 
       result.fold(
         (failure) {
           if (failure is ServerFailureWithMessage) {
-            emit(Failed(failure.message));
+            emit(UserDetailsFailed(failure.message));
           } else {
-            emit(const Failed('Server Failure'));
+            emit(const UserDetailsFailed('Server Failure'));
           }
         },
-        (response) => emit(Loaded(
+        (response) => emit(UserDetailsLoaded(
           issuedBooks: response.issuedBooks,
           totalFine: response.totalFine,
           transactions: response.transactions,

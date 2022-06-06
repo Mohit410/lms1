@@ -17,15 +17,21 @@ class BookListBloc extends Bloc<BookListEvent, BookListState> {
       emit(Loading());
       final result = await _getBookList(NoParams());
 
-      result.fold((failure) => emit(const Failed('Server Failed')), (response) {
+      result.fold((failure) {
+        if (failure is ServerFailureWithMessage) {
+          emit(BookListFailed(failure.message));
+        } else {
+          emit(const BookListFailed('Server Failed'));
+        }
+      }, (response) {
         if (response.success) {
           if (response.books.isEmpty) {
             emit(EmptyBookList());
           } else {
-            emit(BooksLoaded(response.books));
+            emit(BookList(response.books));
           }
         } else {
-          emit(const Failed('No data'));
+          emit(const BookListFailed('No data'));
         }
       });
     });

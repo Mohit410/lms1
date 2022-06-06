@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:lms1/core/utils/utils.dart';
 import 'package:lms1/presentation/components/utils/helper.dart';
 import 'package:lms1/presentation/components/widgets/widgets.dart';
 import 'package:lms1/presentation/screens/collect_fine/collect_fine.dart';
@@ -29,22 +27,17 @@ class _CollectFinePageState extends State<CollectFinePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Center(
-          child: Text(
-            'Collect Fine',
-            style: GoogleFonts.pacifico(),
-          ),
+        title: const Text(
+          'Collect Fine',
         ),
+        centerTitle: true,
         automaticallyImplyLeading: false,
-        elevation: 1,
-        foregroundColor: AppBarColors.foregroundColor.color,
-        backgroundColor: AppBarColors.backgroundColor.color,
       ),
-      body: buildBody(context),
+      body: _buildBody(context),
     );
   }
 
-  buildBody(BuildContext buildContext) {
+  _buildBody(BuildContext buildContext) {
     return BlocConsumer<CollectFineBloc, CollectFineState>(
       listener: (context, state) {
         if (state is FineDetailsLoaded) {
@@ -74,38 +67,36 @@ class _CollectFinePageState extends State<CollectFinePage> {
           padding: const EdgeInsets.all(36.0),
           child: Center(
             child: Form(
-                key: _firstFormKey,
-                child: Column(
-                  children: [
-                    const Spacer(),
-                    _emailField(),
-                    const Spacer(),
-                    _emailSubmitButton(),
-                  ],
-                )),
+              key: _firstFormKey,
+              child: Column(
+                children: [
+                  const Spacer(),
+                  CustomTextField(
+                    controller: _emailController,
+                    validator: (value) {},
+                    prefixIcon: const Icon(Icons.email),
+                    hintText: 'Please enter email',
+                    labelText: 'Email',
+                    inputType: TextInputType.emailAddress,
+                  ),
+                  const Spacer(),
+                  CustomButton(
+                    onPressed: () {
+                      if (_firstFormKey.currentState!.validate()) {
+                        _bloc.add(FetchFineDetails(_emailController.text));
+                      }
+                    },
+                    lable: 'Submit',
+                    color: Colors.red,
+                    textColor: Colors.white,
+                    context: context,
+                  ),
+                ],
+              ),
+            ),
           ),
         );
       },
     );
   }
-
-  _emailField() => CustomTextField(
-        controller: _emailController,
-        validator: (value) {},
-        prefixIcon: const Icon(Icons.email),
-        hintText: 'Please enter email',
-        labelText: 'Email',
-        inputType: TextInputType.emailAddress,
-      );
-
-  _emailSubmitButton() => CustomButton(
-        onPressed: () {
-          if (_firstFormKey.currentState!.validate()) {
-            _bloc.add(FetchFineDetails(_emailController.text));
-          }
-        },
-        lable: 'Submit',
-        color: Colors.red,
-        context: context,
-      );
 }

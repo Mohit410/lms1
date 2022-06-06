@@ -25,8 +25,7 @@ class _LoginPageState extends State<LoginPage> {
   @override
   void initState() {
     super.initState();
-    emailController =
-        TextEditingController(text: UserPreferences.userEmail);
+    emailController = TextEditingController(text: UserPreferences.userEmail);
     passwordController = TextEditingController();
     _isPasswordVisible = false;
   }
@@ -42,16 +41,9 @@ class _LoginPageState extends State<LoginPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Center(
-          child: Text(
-            'Login',
-            style: GoogleFonts.pacifico(),
-          ),
-        ),
+        title: const Text('Login'),
+        centerTitle: true,
         automaticallyImplyLeading: false,
-        elevation: 1,
-        foregroundColor: AppBarColors.foregroundColor.color,
-        backgroundColor: AppBarColors.backgroundColor.color,
       ),
       body: Padding(
         padding: const EdgeInsets.all(8),

@@ -7,6 +7,7 @@ import 'package:lms1/core/usecase/usecase.dart';
 import 'package:lms1/core/utils/utils.dart';
 import 'package:lms1/data/models/models.dart';
 import 'package:lms1/domain/usecases/usecases.dart';
+import 'package:restart_app/restart_app.dart';
 
 part 'dashboard_event.dart';
 part 'dashboard_state.dart';
@@ -48,5 +49,10 @@ class DashboardBloc extends Bloc<DashboardEvent, DashboardState> {
 
       emit(LogoutSuccess());
     });
+  }
+
+  static logout() async {
+    await UserPreferences.clearPreferences();
+    Restart.restartApp();
   }
 }

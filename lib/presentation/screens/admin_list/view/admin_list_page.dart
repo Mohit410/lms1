@@ -35,12 +35,8 @@ class _AdminListPageState extends State<AdminListPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Center(
-          child: Text(
-            'Admins',
-            style: GoogleFonts.pacifico(),
-          ),
-        ),
+        title: const Text('Admins'),
+        centerTitle: true,
         actions: [
           BlocBuilder<AdminListBloc, AdminListState>(
             builder: (context, state) {
@@ -65,9 +61,6 @@ class _AdminListPageState extends State<AdminListPage> {
           ),
         ],
         automaticallyImplyLeading: false,
-        elevation: 1,
-        foregroundColor: AppBarColors.foregroundColor.color,
-        backgroundColor: AppBarColors.backgroundColor.color,
       ),
       body: buildBody(context),
     );

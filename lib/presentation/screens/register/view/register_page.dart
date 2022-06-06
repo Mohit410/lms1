@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:lms1/core/utils/utils.dart';
 import 'package:lms1/data/models/models.dart';
 import 'package:lms1/injection_container.dart';
@@ -71,11 +70,7 @@ class _RegisterPageState extends State<RegisterPage> {
       appBar: AppBar(
         title: Text(
           widget.user == null ? 'Register New User' : 'Edit Details',
-          style: GoogleFonts.pacifico(),
         ),
-        foregroundColor: Colors.black87,
-        backgroundColor: Colors.white,
-        elevation: 1,
         leading: IconButton(
           onPressed: () {
             BlocProvider.of<RegisterBloc>(context).add(BackButtonClicked());
