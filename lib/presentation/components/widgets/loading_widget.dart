@@ -5,6 +5,14 @@ class LoadingWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    return const Center(
+      child: CircularProgressIndicator(),
+    );
+  }
+
+/* 
+  @override
+  Widget build(BuildContext context) {
     return Center(
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 48),
@@ -31,5 +39,5 @@ class LoadingWidget extends StatelessWidget {
         ),
       ),
     );
-  }
+  } */
 }

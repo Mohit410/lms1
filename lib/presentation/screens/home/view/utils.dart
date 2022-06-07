@@ -33,75 +33,75 @@ final LIBRARIAN_PAGES = [
       email: UserPreferences.userEmail!, role: UserPreferences.userRole!),
 ];
 
-final ADMIN_DESTINATIONS = [
-  const BottomNavigationBarItem(
+const ADMIN_DESTINATIONS = [
+  NavigationDestination(
     icon: Icon(Icons.dashboard_outlined),
     label: 'Dashboard',
-    activeIcon: Icon(Icons.dashboard),
+    selectedIcon: Icon(Icons.dashboard),
   ),
-  const BottomNavigationBarItem(
+  NavigationDestination(
     icon: Icon(Icons.people_outline),
     label: 'Student',
-    activeIcon: Icon(Icons.people),
+    selectedIcon: Icon(Icons.people),
   ),
-  BottomNavigationBarItem(
-    icon: Image.asset('assess/images/librarian.png'),
+  NavigationDestination(
+    icon: Icon(Icons.people_outline),
     label: 'Librarian',
-    activeIcon: Image.asset('assess/images/librarian.png'),
+    selectedIcon: Icon(Icons.people_outline),
   ),
-  const BottomNavigationBarItem(
+  NavigationDestination(
     icon: Icon(Icons.admin_panel_settings_outlined),
     label: 'Admin',
-    activeIcon: Icon(Icons.admin_panel_settings),
+    selectedIcon: Icon(Icons.admin_panel_settings),
   ),
-  const BottomNavigationBarItem(
+  NavigationDestination(
     icon: Icon(Icons.library_books_outlined),
     label: 'Books',
-    activeIcon: Icon(Icons.library_books),
+    selectedIcon: Icon(Icons.library_books),
   ),
 ];
 
-final LIBRARIAN_DESTINATIONS = [
-  const BottomNavigationBarItem(
+const LIBRARIAN_DESTINATIONS = [
+  NavigationDestination(
     icon: Icon(Icons.dashboard_outlined),
     label: 'Dashboard',
-    activeIcon: Icon(Icons.dashboard),
+    selectedIcon: Icon(Icons.dashboard),
   ),
-  const BottomNavigationBarItem(
+  NavigationDestination(
     icon: Icon(Icons.library_books_outlined),
     label: 'Books',
-    activeIcon: Icon(Icons.library_books),
+    selectedIcon: Icon(Icons.library_books),
   ),
-  const BottomNavigationBarItem(
+  NavigationDestination(
       icon: Icon(Icons.keyboard_return_outlined),
       label: 'Return Book',
-      activeIcon: Icon(Icons.keyboard_return)),
-  const BottomNavigationBarItem(
+      selectedIcon: Icon(Icons.keyboard_return)),
+  NavigationDestination(
     icon: Icon(Icons.currency_rupee_outlined),
     label: 'Collect Fine',
-    activeIcon: Icon(Icons.currency_rupee),
+    selectedIcon: Icon(Icons.currency_rupee),
   ),
-  const BottomNavigationBarItem(
+  NavigationDestination(
     icon: Icon(Icons.vpn_key_outlined),
     label: 'Update  Password',
-    activeIcon: Icon(Icons.vpn_key),
+    selectedIcon: Icon(Icons.vpn_key),
   ),
 ];
 
 const STUDENT_DESTINATIONS = [
-  BottomNavigationBarItem(
+  NavigationDestination(
     icon: Icon(Icons.dashboard_outlined),
     label: 'Dashboard',
-    activeIcon: Icon(Icons.dashboard),
+    selectedIcon: Icon(Icons.dashboard),
   ),
-  BottomNavigationBarItem(
+  NavigationDestination(
     icon: Icon(Icons.library_books_outlined),
     label: 'Books',
-    activeIcon: Icon(Icons.library_books),
+    selectedIcon: Icon(Icons.library_books),
   ),
-  BottomNavigationBarItem(
+  NavigationDestination(
     icon: Icon(Icons.vpn_key_outlined),
     label: 'Update Password',
-    activeIcon: Icon(Icons.vpn_key),
+    selectedIcon: Icon(Icons.vpn_key),
   ),
 ];

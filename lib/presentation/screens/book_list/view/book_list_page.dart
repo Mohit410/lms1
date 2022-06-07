@@ -9,6 +9,7 @@ import 'package:lms1/presentation/screens/add_new_book/add_new_book.dart';
 import 'package:lms1/presentation/screens/book_details/book_details.dart';
 import 'package:lms1/presentation/screens/book_list/book_list.dart';
 import 'package:lms1/presentation/screens/book_list/view/components/book_search_delegate.dart';
+import 'package:lms1/presentation/screens/book_list/view/components/issue_confirm_dialog.dart';
 
 class BookListPage extends StatefulWidget {
   const BookListPage({Key? key}) : super(key: key);
@@ -137,7 +138,6 @@ class _BookListPageState extends State<BookListPage> {
   _showDetailsSlidable(String bookId) => SlidableAction(
         onPressed: (context) async {
           await Navigator.of(context).push(BookDetailsPage.route(bookId));
-          //.then((value) => _bloc.add(FetchBooks()));
         },
         backgroundColor: Colors.blue,
         foregroundColor: Colors.white,
@@ -159,7 +159,10 @@ class _BookListPageState extends State<BookListPage> {
 
   _issueSlidable(String bookId) => SlidableAction(
         onPressed: (context) async {
-          _bloc.add(IssueBook(bookId));
+          showDialog(
+            context: context,
+            builder: (context) => IssueConfirmDialog(bookId: bookId),
+          );
         },
         backgroundColor: Colors.blue,
         foregroundColor: Colors.white,

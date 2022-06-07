@@ -4,7 +4,6 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:lms1/core/utils/utils.dart';
 import 'package:lms1/data/models/models.dart';
 import 'package:lms1/data/models/user_detail_response.dart';
-import 'package:lms1/presentation/components/widgets/loading_widget.dart';
 import 'package:lms1/presentation/screens/dashboard/dashboard.dart';
 import 'package:lms1/presentation/screens/dashboard/view/components/dashboard_card.dart';
 import 'package:lms1/presentation/screens/dashboard/view/components/dashboard_data_tables.dart';
@@ -92,11 +91,14 @@ class _DashboardPageState extends State<DashboardPage> {
                 child: CircleAvatar(
                   backgroundColor: Colors.white70,
                   child: Text(
-                    _user?.name.splitMapJoin(
-                          RegExp(r' '),
-                          onMatch: (m) => m[0]!,
-                          onNonMatch: (n) => n[0],
-                        ) ??
+                    _user?.name
+                            .splitMapJoin(
+                              RegExp(r' '),
+                              onMatch: (m) => m[0]!,
+                              onNonMatch: (n) => n[0],
+                            )
+                            .trim()
+                            .replaceAll(RegExp(r' '), '') ??
                         'NA',
                     style: GoogleFonts.lato(
                       color: Colors.deepPurple,
@@ -111,7 +113,7 @@ class _DashboardPageState extends State<DashboardPage> {
             automaticallyImplyLeading: false,
           ),
           body: (state is DashboardLoading)
-              ? const Center(child: LoadingWidget())
+              ? const Center(child: CircularProgressIndicator())
               : _buildBody(state),
         );
       },
@@ -131,18 +133,10 @@ class _DashboardPageState extends State<DashboardPage> {
     if (state is DashboardLoaded) {
       if (state.dashboardData is AdminDashboardResponse) {
         _adminDashboardResponse = state.dashboardData as AdminDashboardResponse;
-        return Stack(
-          children: [
-            ListView(),
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                children: [
-                  _adminCardsGridView(_adminDashboardResponse),
-                ],
-              ),
-            ),
-          ],
+        return SingleChildScrollView(
+          physics: const AlwaysScrollableScrollPhysics(),
+          padding: const EdgeInsets.all(16.0),
+          child: _adminCardsGridView(_adminDashboardResponse),
         );
       } else if (state.dashboardData is LibrarianDashboardResponse) {
         _librarianDashboardResponse =
@@ -166,42 +160,74 @@ class _DashboardPageState extends State<DashboardPage> {
       } else if (state.dashboardData is StudentDashboardResponse) {
         _studentDashbaordResponse =
             state.dashboardData as StudentDashboardResponse;
-        _fineHistoryTable =
-            FineHistoryTable(_studentDashbaordResponse.fineHistory);
-        //_issuedBooksTable =
-        //  IssuedBooksTable(_studentDashbaordResponse.issuedBooks);
-        _transactionsTable =
-            TransactionsTable(_studentDashbaordResponse.transactions);
         return Padding(
           padding: const EdgeInsets.all(16.0),
-          child: SingleChildScrollView(
-            physics: const AlwaysScrollableScrollPhysics(),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                _buildIssueBookList(_studentDashbaordResponse.issuedBooks),
-                const SizedBox(height: 30),
-                _buildTransactionsList(_studentDashbaordResponse.transactions),
-                const SizedBox(height: 30),
-                _buildFineList(_studentDashbaordResponse.fineHistory),
-              ],
+          child: SizedBox(
+            height: double.infinity,
+            child: SingleChildScrollView(
+              physics: const AlwaysScrollableScrollPhysics(),
+              child: ExpansionPanelList.radio(
+                initialOpenPanelValue: 0,
+                animationDuration: const Duration(seconds: 1),
+                children: [
+                  ExpansionPanelRadio(
+                    value: 0,
+                    canTapOnHeader: true,
+                    headerBuilder: (context, isExpanded) => const ListTile(
+                      title: Text("Issued Books"),
+                    ),
+                    body: _buildIssuedBookListView(
+                        _studentDashbaordResponse.issuedBooks),
+                  ),
+                  ExpansionPanelRadio(
+                    value: 1,
+                    canTapOnHeader: true,
+                    headerBuilder: (context, isExpanded) => const ListTile(
+                      title: Text("Transactions"),
+                    ),
+                    body: _buildTransactionsListView(
+                        _studentDashbaordResponse.transactions),
+                  ),
+                  ExpansionPanelRadio(
+                    value: 2,
+                    canTapOnHeader: true,
+                    headerBuilder: (context, isExpanded) => const ListTile(
+                      title: Text("Fine History"),
+                    ),
+                    body: _buildFineExpansionListView(
+                        _studentDashbaordResponse.fineHistory),
+                  ),
+                ],
+              ),
+              /* Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _buildIssueBookList(_studentDashbaordResponse.issuedBooks),
+                  const SizedBox(height: 30),
+                  _buildTransactionsList(_studentDashbaordResponse.transactions),
+                  const SizedBox(height: 30),
+                  _buildFineList(_studentDashbaordResponse.fineHistory),
+                ],
+              ), */
             ),
           ),
         );
       }
-    } else if (state is DashboardFailed) {
-      return Stack(
-        children: [
-          ListView(),
-          Center(
-            child: Text(state.message),
-          ),
-        ],
-      );
     }
-    return const Center(
-      child: CircularProgressIndicator(),
+    return Center(
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          state is DashboardFailed ? Text(state.message) : Container(),
+          TextButton(
+            onPressed: () {
+              _bloc.add(FetchDashboardData());
+            },
+            child: const Text("Retry"),
+          )
+        ],
+      ),
     );
   }
 
@@ -211,6 +237,7 @@ class _DashboardPageState extends State<DashboardPage> {
       mainAxisSpacing: 12,
       crossAxisCount: 2,
       shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
       children: [
         DashbaordCard(
           title: 'Total Users',
@@ -240,6 +267,7 @@ class _DashboardPageState extends State<DashboardPage> {
       mainAxisSpacing: 12,
       crossAxisCount: 2,
       shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
       children: [
         DashbaordCard(
           title: 'Total Students',
@@ -275,7 +303,39 @@ class _DashboardPageState extends State<DashboardPage> {
     );
   }
 
-  _buildIssueBookList(List<IssuedBookModel> books) => ExpansionTile(
+  _buildIssuedBookListView(List<IssuedBookModel> books) => ListView.builder(
+        shrinkWrap: true,
+        cacheExtent: 100,
+        physics: const NeverScrollableScrollPhysics(),
+        itemCount: books.length,
+        itemBuilder: (context, index) => ListTile(
+          title: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Flexible(
+                child: Text(
+                  "Book Name : ${books[index].name}",
+                  overflow: TextOverflow.clip,
+                ),
+              ),
+              const SizedBox(width: 20),
+              Text(
+                "Fine : \u{20B9}${books[index].fine}",
+                style: const TextStyle(color: Colors.red),
+              ),
+            ],
+          ),
+          subtitle: Wrap(
+            alignment: WrapAlignment.spaceBetween,
+            children: [
+              Text('Issue Date : ${books[index].issueDate}'),
+              Text('Return Date : ${books[index].returnDate}'),
+            ],
+          ),
+        ),
+      );
+
+  _buildIssueBookExpansionTile(List<IssuedBookModel> books) => ExpansionTile(
         title: const Text('Issued Books'),
         childrenPadding: const EdgeInsets.all(16),
         initiallyExpanded: true,
@@ -314,7 +374,34 @@ class _DashboardPageState extends State<DashboardPage> {
         ],
       );
 
-  _buildTransactionsList(List<TransactionModel> transactions) => ExpansionTile(
+  _buildTransactionsListView(List<TransactionModel> transactions) =>
+      ListView.builder(
+        physics: const NeverScrollableScrollPhysics(),
+        shrinkWrap: true,
+        itemCount: transactions.length,
+        itemBuilder: (context, index) => ListTile(
+          title: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Flexible(
+                child: Text(
+                  "Purpose : ${transactions[index].purpose}",
+                  overflow: TextOverflow.clip,
+                ),
+              ),
+              const SizedBox(width: 20),
+              Text(
+                "Amount : \u{20B9}${transactions[index].amount}",
+                style: const TextStyle(color: Colors.red),
+              ),
+            ],
+          ),
+          subtitle: Text("Date : ${transactions[index].transactionDate}"),
+        ),
+      );
+
+  _buildTransactionsExpansionTile(List<TransactionModel> transactions) =>
+      ExpansionTile(
         title: const Text('Transactions'),
         childrenPadding: const EdgeInsets.all(16),
         children: [
@@ -341,11 +428,42 @@ class _DashboardPageState extends State<DashboardPage> {
               ),
               subtitle: Text("Date : ${transactions[index].transactionDate}"),
             ),
-          )
+          ),
         ],
       );
 
-  _buildFineList(List<FineHistoryModel> fines) => ExpansionTile(
+  _buildFineExpansionListView(List<FineHistoryModel> fines) => ListView.builder(
+        shrinkWrap: true,
+        physics: const NeverScrollableScrollPhysics(),
+        itemCount: fines.length,
+        itemBuilder: (context, index) => ListTile(
+          title: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Flexible(
+                child: Text(
+                  "Book Id : ${fines[index].bookId}",
+                  overflow: TextOverflow.clip,
+                ),
+              ),
+              const SizedBox(width: 20),
+              Text(
+                "Fine : \u{20B9}${fines[index].fine}",
+                style: const TextStyle(color: Colors.red),
+              ),
+            ],
+          ),
+          subtitle: Wrap(
+            alignment: WrapAlignment.spaceBetween,
+            children: [
+              Text('Actual Return Date : ${fines[index].actualReturnDate}'),
+              Text('User Return Date : ${fines[index].userReturnDate}'),
+            ],
+          ),
+        ),
+      );
+
+  _buildFineExpansionTile(List<FineHistoryModel> fines) => ExpansionTile(
         title: const Text("Fine History"),
         childrenPadding: const EdgeInsets.all(16),
         children: [

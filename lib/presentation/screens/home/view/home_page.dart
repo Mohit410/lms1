@@ -65,22 +65,15 @@ class _HomePageState extends State<HomePage> {
         key: _scaffoldKey,
         appBar: null,
         floatingActionButton: _getFAB(),
-        bottomNavigationBar: BottomNavigationBar(
-          currentIndex: _currentIndex,
-          showUnselectedLabels: true,
-          unselectedLabelStyle: const TextStyle(
-            overflow: TextOverflow.clip,
-          ),
-          selectedLabelStyle: const TextStyle(
-            overflow: TextOverflow.clip,
-          ),
-          type: BottomNavigationBarType.fixed,
-          onTap: (index) {
+        bottomNavigationBar: NavigationBar(
+          selectedIndex: _currentIndex,
+          labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
+          onDestinationSelected: (index) {
             setState(() {
               _currentIndex = index;
             });
           },
-          items: _getDestinations(),
+          destinations: _getDestinations(),
         ),
         body: _buildBody(context),
       ),
@@ -191,7 +184,7 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
-  List<BottomNavigationBarItem> _getDestinations() {
+  List<NavigationDestination> _getDestinations() {
     if (UserPreferences.userRole == Role.admin.name) {
       return ADMIN_DESTINATIONS;
     } else if (UserPreferences.userRole == Role.librarian.name) {

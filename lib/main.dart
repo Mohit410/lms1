@@ -9,6 +9,7 @@ import 'package:lms1/presentation/screens/book_details/book_details.dart';
 import 'package:lms1/presentation/screens/collect_fine/collect_fine.dart';
 import 'package:lms1/presentation/screens/dashboard/bloc/dashboard_bloc.dart';
 import 'package:lms1/presentation/screens/login/login.dart';
+import 'package:lms1/presentation/screens/splash_screen/splash_screen.dart';
 import 'package:lms1/presentation/screens/update_password/update_password.dart';
 import 'package:lms1/presentation/screens/user_detail/bloc/user_detail_bloc.dart';
 import 'injection_container.dart';
@@ -59,15 +60,7 @@ class MyApp extends StatelessWidget {
         theme: lightTheme(context),
         title: "Library Management App",
         darkTheme: darkTheme(context),
-        home: Scaffold(
-          body: SafeArea(
-            child: Center(
-              child: UserPreferences.userToken == null
-                  ? const LoginPage()
-                  : const HomePage(),
-            ),
-          ),
-        ),
+        home: const SplashScreen(),
       ),
     );
   }
@@ -75,9 +68,8 @@ class MyApp extends StatelessWidget {
   lightTheme(BuildContext context) => ThemeData.light().copyWith(
         useMaterial3: true,
         appBarTheme: AppBarTheme(
-          elevation: 1,
-          //backgroundColor: Colors.white,
-          color: Colors.white,
+          //elevation: 1,
+          //color: Colors.white,
           iconTheme: const IconThemeData(color: Colors.black54),
           actionsIconTheme: const IconThemeData(color: Colors.black),
           titleTextStyle: GoogleFonts.lato(
@@ -88,10 +80,15 @@ class MyApp extends StatelessWidget {
           ),
         ),
         colorScheme: const ColorScheme.light().copyWith(),
-        bottomNavigationBarTheme: const BottomNavigationBarThemeData(
+        navigationBarTheme: NavigationBarThemeData(
+          //elevation: 1,
           backgroundColor: Colors.white,
-          elevation: 10,
-          //unselectedItemColor: Colors.grey[800],
+          labelTextStyle: MaterialStateProperty.all(
+            const TextStyle(
+              overflow: TextOverflow.clip,
+            ),
+          ),
+          labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
         ),
         floatingActionButtonTheme: FloatingActionButtonThemeData(
           backgroundColor: Colors.indigo.shade500,
@@ -116,11 +113,32 @@ class MyApp extends StatelessWidget {
             ),
           ),
         ),
-        bottomNavigationBarTheme: const BottomNavigationBarThemeData(
-          unselectedItemColor: Colors.white70,
-          selectedItemColor: Colors.greenAccent,
+        navigationBarTheme: NavigationBarThemeData(
           backgroundColor: Colors.indigo,
+          labelTextStyle: MaterialStateProperty.all(
+            const TextStyle(
+              overflow: TextOverflow.clip,
+            ),
+          ),
+          labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
         ),
         colorScheme: const ColorScheme.dark().copyWith(),
       );
+}
+
+class StartApp extends StatelessWidget {
+  const StartApp({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: SafeArea(
+        child: Center(
+          child: UserPreferences.userToken == null
+              ? const LoginPage()
+              : const HomePage(),
+        ),
+      ),
+    );
+  }
 }
