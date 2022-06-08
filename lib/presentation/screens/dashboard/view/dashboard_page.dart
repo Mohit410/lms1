@@ -133,10 +133,13 @@ class _DashboardPageState extends State<DashboardPage> {
     if (state is DashboardLoaded) {
       if (state.dashboardData is AdminDashboardResponse) {
         _adminDashboardResponse = state.dashboardData as AdminDashboardResponse;
-        return SingleChildScrollView(
-          physics: const AlwaysScrollableScrollPhysics(),
-          padding: const EdgeInsets.all(16.0),
-          child: _adminCardsGridView(_adminDashboardResponse),
+        return SizedBox(
+          height: double.infinity,
+          child: SingleChildScrollView(
+            physics: const AlwaysScrollableScrollPhysics(),
+            padding: const EdgeInsets.all(16.0),
+            child: _adminCardsGridView(_adminDashboardResponse),
+          ),
         );
       } else if (state.dashboardData is LibrarianDashboardResponse) {
         _librarianDashboardResponse =

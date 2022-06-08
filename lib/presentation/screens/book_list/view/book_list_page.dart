@@ -149,7 +149,7 @@ class _BookListPageState extends State<BookListPage> {
         onPressed: (context) async {
           await Navigator.push(
                   context, AddNewBookPage.route(book, PageMode.edit))
-              .then((value) => _bloc.add(FetchBooks()));
+              .then((value) => _bloc.add(FetchBooks()),);
         },
         backgroundColor: Colors.red,
         foregroundColor: Colors.white,

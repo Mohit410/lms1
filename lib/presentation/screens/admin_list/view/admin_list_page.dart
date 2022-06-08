@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:lms1/core/utils/utils.dart';
 import 'package:lms1/data/models/models.dart';
 import 'package:lms1/presentation/components/user_list_search_delegate.dart';
 import 'package:lms1/presentation/components/utils/helper.dart';
@@ -67,8 +65,7 @@ class _AdminListPageState extends State<AdminListPage> {
   }
 
   buildBody(BuildContext buildContext) {
-    return BlocConsumer<AdminListBloc, AdminListState>(
-      listener: (context, state) {},
+    return BlocBuilder<AdminListBloc, AdminListState>(
       builder: (context, state) {
         return RefreshIndicator(
           onRefresh: () async {
@@ -113,7 +110,9 @@ class _AdminListPageState extends State<AdminListPage> {
                   .push(UserDetailPage.route(
                       users[index].email, users[index].role))
                   .then((value) {
-                _bloc.add(FetchAdminList());
+                if (value == 'refresh') {
+                  _bloc.add(FetchAdminList());
+                }
               });
             },
           );
