@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:lms1/core/utils/constants.dart';
 import 'package:lms1/data/models/fine_details_response.dart';
 import 'package:lms1/data/models/user_detail_response.dart';
 import 'package:lms1/presentation/components/utils/helper.dart';
@@ -49,15 +48,7 @@ class _CollectFineDialogState extends State<CollectFineDialog> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          'Collect Fine',
-          style: GoogleFonts.pacifico(),
-        ),
-        elevation: 1,
-        foregroundColor: AppBarColors.foregroundColor.color,
-        backgroundColor: AppBarColors.backgroundColor.color,
-      ),
+      appBar: AppBar(title: const Text('Collect Fine')),
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(36),

@@ -32,11 +32,3 @@ enum HttpErrors {
 }
 
 enum PageMode { edit, addNew }
-
-enum AppBarColors {
-  foregroundColor(Colors.black87),
-  backgroundColor(Colors.white);
-
-  final Color color;
-  const AppBarColors(this.color);
-}

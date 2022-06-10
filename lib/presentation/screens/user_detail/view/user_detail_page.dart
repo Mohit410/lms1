@@ -46,13 +46,7 @@ class _UserDetailPageState extends State<UserDetailPage> {
       builder: (context, state) {
         return Scaffold(
           appBar: AppBar(
-            title: Text(
-              'User Details',
-              style: GoogleFonts.pacifico(),
-            ),
-            elevation: 1,
-            foregroundColor: Colors.black87,
-            backgroundColor: Colors.white,
+            title: const Text('User Details'),
           ),
           body: (state is UserDetailsLoading)
               ? const Center(child: LoadingWidget())
