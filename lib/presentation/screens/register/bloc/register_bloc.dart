@@ -41,9 +41,5 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
         }
       }, (response) => emit(RegisterSuccess(response.message)));
     });
-
-    on<BackButtonClicked>((event, emit) async {
-      emit(RegisterInitial());
-    });
   }
 }

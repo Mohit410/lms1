@@ -71,15 +71,8 @@ class _RegisterPageState extends State<RegisterPage> {
         title: Text(
           widget.user == null ? 'Register New User' : 'Edit Details',
         ),
-        leading: IconButton(
-          onPressed: () {
-            BlocProvider.of<RegisterBloc>(context).add(BackButtonClicked());
-            Navigator.of(context).pop();
-          },
-          icon: const Icon(Icons.arrow_back),
-        ),
       ),
-      body: buildBody(context),
+      body: _buildBody(context),
     );
   }
 
@@ -256,7 +249,7 @@ class _RegisterPageState extends State<RegisterPage> {
         },
       );
 
-  buildBody(BuildContext buildContext) {
+  _buildBody(BuildContext buildContext) {
     return BlocConsumer<RegisterBloc, RegisterState>(
       listener: (context, state) {
         if (state is RegisterSuccess) {

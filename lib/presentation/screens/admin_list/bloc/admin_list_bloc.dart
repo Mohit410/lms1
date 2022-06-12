@@ -16,15 +16,15 @@ class AdminListBloc extends Bloc<AdminListEvent, AdminListState> {
   final GetUserList _getUserList;
   AdminListBloc(this._getUserList) : super(EmptyAdmins()) {
     on<FetchAdminList>((event, emit) async {
-      emit(Loading());
+      emit(AdminListLoading());
       final result = await _getUserList(NoParams());
 
       result.fold(
         (failure) {
           if (failure is ServerFailureWithMessage) {
-            emit(Failed(message: failure.message));
+            emit(AdminListFailed(message: failure.message));
           } else {
-            emit(const Failed(message: 'Server Error'));
+            emit(const AdminListFailed(message: 'Server Error'));
           }
         },
         (response) {
@@ -34,10 +34,10 @@ class AdminListBloc extends Bloc<AdminListEvent, AdminListState> {
             if (adminList.isEmpty) {
               emit(EmptyAdmins());
             } else {
-              emit(AdminsLoaded(admins: adminList));
+              emit(AdminListLoaded(admins: adminList));
             }
           } else {
-            emit(const Failed(message: 'No data'));
+            emit(const AdminListFailed(message: 'No data'));
           }
         },
       );

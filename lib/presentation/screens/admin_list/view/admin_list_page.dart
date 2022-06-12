@@ -40,7 +40,7 @@ class _AdminListPageState extends State<AdminListPage> {
             builder: (context, state) {
               return IconButton(
                 onPressed: () {
-                  if (state is AdminsLoaded) {
+                  if (state is AdminListLoaded) {
                     showSearch(
                       context: context,
                       delegate: UserListSearchDelegate(
@@ -78,15 +78,15 @@ class _AdminListPageState extends State<AdminListPage> {
   }
 
   showListDataList(AdminListState state) {
-    if (state is Loading) {
+    if (state is AdminListLoading) {
       return const Center(child: LoadingWidget());
-    } else if (state is AdminsLoaded) {
+    } else if (state is AdminListLoaded) {
       return _showListView(state.admins);
     } else if (state is EmptyAdmins) {
       return const Center(
         child: Text('No Admins Available'),
       );
-    } else if (state is Failed) {
+    } else if (state is AdminListFailed) {
       return Center(
         child: Text(state.message),
       );

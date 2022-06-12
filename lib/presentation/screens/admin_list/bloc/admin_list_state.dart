@@ -7,11 +7,11 @@ abstract class AdminListState extends Equatable {
   List<Object> get props => [];
 }
 
-class Loading extends AdminListState {}
+class AdminListLoading extends AdminListState {}
 
-class AdminsLoaded extends AdminListState {
+class AdminListLoaded extends AdminListState {
   final List<UserModel> admins;
-  const AdminsLoaded({required this.admins});
+  const AdminListLoaded({required this.admins});
 
   @override
   List<Object> get props => [admins];
@@ -19,9 +19,9 @@ class AdminsLoaded extends AdminListState {
 
 class EmptyAdmins extends AdminListState {}
 
-class Failed extends AdminListState {
+class AdminListFailed extends AdminListState {
   final String message;
-  const Failed({required this.message});
+  const AdminListFailed({required this.message});
 
   @override
   List<Object> get props => [message];

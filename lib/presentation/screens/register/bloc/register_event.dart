@@ -18,4 +18,3 @@ class UpdateUserClicked extends RegisterEvent {
   UpdateUserClicked({required this.userModel});
 }
 
-class BackButtonClicked extends RegisterEvent {}

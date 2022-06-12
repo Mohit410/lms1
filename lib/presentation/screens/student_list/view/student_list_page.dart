@@ -44,7 +44,7 @@ class _StudentListPageState extends State<StudentListPage> {
             builder: (context, state) {
               return IconButton(
                 onPressed: () {
-                  if (state is StudentsLoaded) {
+                  if (state is StudentListLoaded) {
                     showSearch(
                       context: context,
                       delegate: UserListSearchDelegate(
@@ -83,9 +83,9 @@ class _StudentListPageState extends State<StudentListPage> {
   }
 
   showListDataList(StudentListState state) {
-    if (state is Loading) {
+    if (state is StudentListLoading) {
       return const Center(child: LoadingWidget());
-    } else if (state is StudentsLoaded) {
+    } else if (state is StudentListLoaded) {
       return Padding(
         padding: const EdgeInsets.all(8.0),
         child: _showListView(state.students),
@@ -94,7 +94,7 @@ class _StudentListPageState extends State<StudentListPage> {
       return const Center(
         child: Text('No Students Available'),
       );
-    } else if (state is Failed) {
+    } else if (state is StudentListFailed) {
       return SizedBox(
         height: double.infinity,
         child: Center(

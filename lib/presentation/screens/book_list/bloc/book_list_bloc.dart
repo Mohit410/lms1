@@ -14,7 +14,7 @@ class BookListBloc extends Bloc<BookListEvent, BookListState> {
   final GetIssueBook _getIssueBook;
   BookListBloc(this._getBookList, this._getIssueBook) : super(EmptyBookList()) {
     on<FetchBooks>((event, emit) async {
-      emit(Loading());
+      emit(BookListLoading());
       final result = await _getBookList(NoParams());
 
       result.fold((failure) {
@@ -28,7 +28,7 @@ class BookListBloc extends Bloc<BookListEvent, BookListState> {
           if (response.books.isEmpty) {
             emit(EmptyBookList());
           } else {
-            emit(BookList(response.books));
+            emit(BookListLoaded(response.books));
           }
         } else {
           emit(const BookListFailed('No data'));
@@ -37,7 +37,7 @@ class BookListBloc extends Bloc<BookListEvent, BookListState> {
     });
 
     on<IssueBook>((event, emit) async {
-      emit(Loading());
+      emit(BookListLoading());
 
       final result = await _getIssueBook(event.bookId);
 

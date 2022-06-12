@@ -9,12 +9,12 @@ abstract class BookListState extends Equatable {
 
 class EmptyBookList extends BookListState {}
 
-class Loading extends BookListState {}
+class BookListLoading extends BookListState {}
 
-class BookList extends BookListState {
+class BookListLoaded extends BookListState {
   final List<BookModel> books;
 
-  const BookList(this.books);
+  const BookListLoaded(this.books);
 }
 
 class BookListFailed extends BookListState {

@@ -54,7 +54,7 @@ class _BookListPageState extends State<BookListPage> {
             actions: [
               IconButton(
                 onPressed: () {
-                  state is BookList
+                  state is BookListLoaded
                       ? showSearch(
                           context: context,
                           delegate: BookSearchDelegate(
@@ -71,7 +71,7 @@ class _BookListPageState extends State<BookListPage> {
             ],
             automaticallyImplyLeading: false,
           ),
-          body: (state is Loading)
+          body: (state is BookListLoading)
               ? const Center(child: LoadingWidget())
               : RefreshIndicator(
                   onRefresh: () async {
@@ -87,7 +87,7 @@ class _BookListPageState extends State<BookListPage> {
   _refreshList() => _bloc.add(FetchBooks());
 
   _showListDataList(BookListState state) {
-    if (state is BookList) {
+    if (state is BookListLoaded) {
       return _showListView(state.books);
     } else {
       return Center(
@@ -149,7 +149,9 @@ class _BookListPageState extends State<BookListPage> {
         onPressed: (context) async {
           await Navigator.push(
                   context, AddNewBookPage.route(book, PageMode.edit))
-              .then((value) => _bloc.add(FetchBooks()),);
+              .then(
+            (value) => _bloc.add(FetchBooks()),
+          );
         },
         backgroundColor: Colors.red,
         foregroundColor: Colors.white,

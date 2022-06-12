@@ -9,19 +9,19 @@ abstract class StudentListState extends Equatable {
 
 class EmptyStudents extends StudentListState {}
 
-class Loading extends StudentListState {}
+class StudentListLoading extends StudentListState {}
 
-class StudentsLoaded extends StudentListState {
+class StudentListLoaded extends StudentListState {
   final List<UserModel> students;
-  const StudentsLoaded({required this.students});
+  const StudentListLoaded({required this.students});
 
   @override
   List<Object> get props => [students];
 }
 
-class Failed extends StudentListState {
+class StudentListFailed extends StudentListState {
   final String message;
-  const Failed({required this.message});
+  const StudentListFailed({required this.message});
 
   @override
   List<Object> get props => [message];

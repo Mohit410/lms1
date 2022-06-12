@@ -1,24 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:lms1/presentation/screens/screens.dart';
 import 'package:lms1/core/network/http_client.dart';
-import 'package:lms1/core/utils/user_preferences.dart';
-import 'package:lms1/presentation/screens/add_new_book/add_new_book.dart';
-import 'package:lms1/presentation/screens/admin_list/bloc/admin_list_bloc.dart';
-import 'package:lms1/presentation/screens/book_details/book_details.dart';
-import 'package:lms1/presentation/screens/collect_fine/collect_fine.dart';
-import 'package:lms1/presentation/screens/dashboard/bloc/dashboard_bloc.dart';
-import 'package:lms1/presentation/screens/login/login.dart';
-import 'package:lms1/presentation/screens/splash_screen/splash_screen.dart';
-import 'package:lms1/presentation/screens/update_password/update_password.dart';
-import 'package:lms1/presentation/screens/user_detail/bloc/user_detail_bloc.dart';
+import 'package:lms1/core/utils/utils.dart';
 import 'injection_container.dart';
-import 'presentation/screens/book_list/book_list.dart';
-import 'presentation/screens/home/home.dart';
-import 'presentation/screens/librarian_list/bloc/librarian_list_bloc.dart';
-import 'presentation/screens/register/register.dart';
-import 'presentation/screens/return_book/return_book.dart';
-import 'presentation/screens/student_list/student_list.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
