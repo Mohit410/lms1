@@ -62,7 +62,6 @@ class _CollectFineDialogState extends State<CollectFineDialog> {
                   style: DefaultTextStyle.of(context).style.copyWith(
                       fontSize: 16,
                       fontWeight: FontWeight.w500,
-                      color: Colors.black,
                       decoration: TextDecoration.none),
                   children: [
                     TextSpan(
@@ -202,7 +201,8 @@ class _CollectFineDialogState extends State<CollectFineDialog> {
           }
         },
         lable: 'Collect',
-        color: Theme.of(context).primaryColorLight,
+        color: Colors.blue,
+        textColor: Colors.white,
         context: context,
       );
 }
